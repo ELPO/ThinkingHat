@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>views/readyView.qml</file>
+        <file>views/characterView.qml</file>
+        <file>views/homeView.qml</file>
+        <file>views/problemBoardView.qml</file>
+        <file>views/problems/theCakeIntro.qml</file>
+        <file>views/problems/theCake.qml</file>
+        <file>resources/audio.png</file>
+        <file>resources/problema1.wav</file>
+        <file>resources/check.png</file>
+        <file>resources/draw.png</file>
+        <file>views/problems/theCakeCalc.qml</file>
+        <file>resources/eraser.png</file>
+        <file>resources/intro.avi</file>
+        <file>resources/intro.3gp</file>
+        <file>resources/avatars/001.png</file>
+        <file>resources/avatars/002.png</file>
+        <file>resources/avatars/003.png</file>
+        <file>resources/avatars/004.png</file>
+        <file>resources/lock.png</file>
+        <file>resources/hat.png</file>
+        <file>resources/mainHat.png</file>
+        <file>views/successView.qml</file>
+        <file>views/wrongView.qml</file>
+        <file>resources/trophy.png</file>
+        <file>resources/sad.png</file>
+    </qresource>
+</RCC>
