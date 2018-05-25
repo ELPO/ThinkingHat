@@ -140,30 +140,19 @@ Item
                 if (validate(trimmed)) {
                     var pre = text.substring(0, text.indexOf(trimmed))
                     var truePre = pre.substring(pre.lastIndexOf("\n"))
-                    var preRect = fontMetrics.boundingRect(truePre)
 
                     var stringsearch = "\n";
                     var count = -1;
                     for (var index = 0; index != -1; count++, index = pre.indexOf(stringsearch, index + 1));
 
-                    var ySpace = (preRect.height + 1) * count;
+                    var ySpace = fontMetrics.height * count;
                     var rect = fontMetrics.boundingRect(trimmed)
 
                     //hardcoded change
-                    var xSpace = preRect.width
-                    if (butidx === 0) {
-                        xSpace += -11
-                        ySpace += -3
-                    } else if (butidx === 1) {
-                        xSpace += 8
-                        ySpace += 0
-                    } else if (butidx === 2) {
-                        xSpace += -2
-                        ySpace += -2
-                    }
+                    var xSpace =  fontMetrics.advanceWidth(truePre) - 1
 
                     Qt.createQmlObject('import QtQuick 2.0; Rectangle {x: ' + xSpace + '; y: ' + ySpace + '; color: "' + selectionColor
-                                       +'"; width: ' + (rect.width + 2)  + '; height: 22; Text {anchors.centerIn: parent; font.pointSize: ' +
+                                       +'"; width: ' + (rect.width + 2)  + '; height: '+ fontMetrics.height + '; Text {anchors.centerIn: parent; font.pointSize: ' +
                                        statment.font.pointSize + '; font.family: "Droid Sans Mono"; text: "' + trimmed +'";}}', statment)
                     deselect()
                     selectByMouse = false
