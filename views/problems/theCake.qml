@@ -179,26 +179,32 @@ Item
                 visible: false
                 anchors.fill: parent
                 property int start: 0
+                property int start2: 0
                 property int end: 0
 
                 onPressed: {
-                    start = statment.positionAt(mouseX, mouseY)
+                    var letterNumber = /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
+                    var ini = statment.positionAt(mouseX, mouseY)
+                    var end = ini
+                    while (statment.getText(ini - 1 , ini).match(letterNumber)) {
+                        ini = ini - 1
+                    }
+
+                    start = ini
+
+                    while (statment.getText(end, end + 1).match(letterNumber)) {
+                        end = end + 1
+                    }
+
+                    start2 = end
                 }
 
                 onMouseXChanged: {
-                    var newEnd = statment.positionAt(mouseX, mouseY)
-                    if (newEnd !== end) {
-                        end = newEnd
-                        statment.select(start, end)
-                    }
+                    customSelection()
                 }
 
                 onMouseYChanged: {
-                    var newEnd = statment.positionAt(mouseX, mouseY)
-                    if (newEnd !== end) {
-                        end = newEnd
-                        statment.select(start, end)
-                    }
+                    customSelection()
                 }
 
                 onReleased: {
@@ -206,6 +212,31 @@ Item
                     end = 0
 
                     statment.evaluate()
+                }
+
+                function customSelection() {
+                    var letterNumber = /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
+                    var pos = statment.positionAt(mouseX, mouseY)
+                    var offset;
+                    if (pos > start) {
+                        while (statment.getText(pos, pos + 1).match(letterNumber)) {
+                            pos = pos + 1
+                        }
+
+                        if (pos !== end) {
+                            end = pos
+                            statment.select(start, end)
+                        }
+                    } else {
+                        while (statment.getText(pos - 1, pos).match(letterNumber)) {
+                            pos = pos - 1
+                        }
+
+                        if (pos !== end) {
+                            end = pos
+                            statment.select(start2, end)
+                        }
+                    }
                 }
             }
         }
