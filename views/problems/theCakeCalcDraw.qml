@@ -54,109 +54,39 @@ Item
         anchors.fill: parent
 
         Text {
-            text: "Check understanding"
+            text: "Simplified drawing"
             anchors.horizontalCenter: parent.horizontalCenter
             font.family: "Droid Sans Mono"
             font.pointSize: 14
             color: "gray"
         }
 
-        RowLayout {
-            Item {
+        Item {
+            width: parent.width
+            height: 100
+
+            Image {
+                id: exam
+
                 height: parent.height
-                width: 30
-            }
-            Rectangle {
-                color: "#b6e8e5"
-                width: 160
-                height: 70
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "The starting\npoint?"
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 14
-                    color: "black"
-                }
+                source: appGlobal.drawPre
+                anchors.left: parent.left
+                fillMode: Image.PreserveAspectFit
             }
 
-            Item {
+            Image {
+                anchors.centerIn: parent
+                source: "../../resources/arrow.png"
+                anchors.right: parent.right
+                height: 40
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Image {
                 height: parent.height
-                width: 30
-            }
-
-            Text {
-                text: "12 casas"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 18
-                color: "black"
-                Layout.fillWidth: true
-            }
-        }
-
-        RowLayout {
-            Item {
-                height: parent.height
-                width: 30
-            }
-            Rectangle {
-                color: "#F0A9ED"
-                width: 160
-                height: 70
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "What is the\nchanger?"
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 14
-                    color: "black"
-                }
-            }
-
-            Item {
-                height: parent.height
-                width: 30
-            }
-
-            Text {
-                text: "El juez me\nha quitado 6"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 18
-                color: "black"
-                Layout.fillWidth: true
-            }
-        }
-
-        RowLayout {
-            Item {
-                height: parent.height
-                width: 30
-            }
-            Rectangle {
-                color: "#FFFF01"
-                width: 160
-                height: 70
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "What is the\nunknown?"
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 14
-                    color: "black"
-                }
-            }
-
-            Item {
-                height: parent.height
-                width: 30
-            }
-
-            Text {
-                text: "Cuántas casas\nme quedan?"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 18
-                color: "black"
-                Layout.fillWidth: true
+                source: appGlobal.drawPost
+                anchors.right: parent.right
+                fillMode: Image.PreserveAspectFit
             }
         }
 
@@ -173,7 +103,7 @@ Item
 
                 ctx.lineWidth = 2;
                 ctx.lineCap = "round"
-                ctx.lineJoin ="bevel"
+                ctx.lineJoin = "bevel"
                 ctx.strokeStyle = "black"
                 ctx.beginPath()
 

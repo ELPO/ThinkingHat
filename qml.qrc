@@ -26,5 +26,16 @@
         <file>views/wrongView.qml</file>
         <file>resources/trophy.png</file>
         <file>resources/sad.png</file>
+        <file>resources/hatCartoon.png</file>
+        <file>resources/notebook.png</file>
+        <file>resources/onotebook.png</file>
+        <file>resources/houses/house1.png</file>
+        <file>resources/houses/house2.png</file>
+        <file>resources/houses/house3.png</file>
+        <file>resources/houses/house4.png</file>
+        <file>resources/houses/house5.png</file>
+        <file>resources/houses/house6.png</file>
+        <file>views/problems/theCakeCalcDraw.qml</file>
+        <file>resources/arrow.png</file>
     </qresource>
 </RCC>

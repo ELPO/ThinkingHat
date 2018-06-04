@@ -2,6 +2,8 @@ import QtQuick 2.10
 import QtQuick.Controls 2.2
 import QtMultimedia 5.8
 import QtQuick.Layouts 1.3
+import QtSensors 5.0
+import QtGraphicalEffects 1.0
 
 Item
 {
@@ -44,7 +46,7 @@ Item
                 return true
             else return false;
         } else if (cursors.currentIndex == 2) {
-            if (text === "quita 6")
+            if (text === "quita 6" || text === "me quita 6")
                 return true
             else return false;
         }
@@ -125,7 +127,7 @@ Item
             readOnly: true
             persistentSelection: true
 
-            font.pointSize: 18
+            font.pointSize: 20
             font.family: "Droid Sans Mono"
 
             FontMetrics {
@@ -147,11 +149,13 @@ Item
 
                     var ySpace = fontMetrics.height * count;
                     var rect = fontMetrics.boundingRect(trimmed)
+                    var xSpace = Qt.platform.os === "android" ? fontMetrics.advanceWidth(truePre) :
+                                                                fontMetrics.advanceWidth(truePre)
 
-                    //hardcoded change
-                    var xSpace =  fontMetrics.advanceWidth(truePre) - 1
+                    console.log(xSpace + " " + ySpace + " " + rect)
 
-                    Qt.createQmlObject('import QtQuick 2.0; Rectangle {x: ' + xSpace + '; y: ' + ySpace + '; color: "' + selectionColor
+
+                    Qt.createQmlObject('import QtQuick 2.10; Rectangle {x: ' + xSpace + '; y: ' + ySpace + '; color: "' + selectionColor
                                        +'"; width: ' + (rect.width + 2)  + '; height: '+ fontMetrics.height + '; Text {anchors.centerIn: parent; font.pointSize: ' +
                                        statment.font.pointSize + '; font.family: "Droid Sans Mono"; text: "' + trimmed +'";}}', statment)
                     deselect()
@@ -271,6 +275,7 @@ Item
             onClicked: {
                 if (!screen.solved) {
                     visible = false
+                    draw.visible = false
                     header.visible = true
                     buttons.visible = true
                 } else {
@@ -280,6 +285,440 @@ Item
         }
 
         Item {
+            id: smallSpacer
+
+            width: parent.width
+            height: 10
+        }
+
+        Button {
+            id: draw
+
+            text: "Draw Strategy"
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.family: "Droid Sans Mono"
+            font.pointSize: 14
+
+            background: Rectangle {
+                color: "black"
+                radius: width / 3.2
+            }
+
+            contentItem: Text {
+                text: draw.text
+                font: draw.font
+                color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+
+            onClicked: {
+                visible = false
+                check.visible = false
+                smallSpacer.visible = false
+                spacer.visible = false
+                drawCanvas.visible = true
+                avatarItem.visible = true
+                timer.restart()
+            }
+        }
+
+        Item {
+            id: eraserItem
+
+            anchors.right: parent.right
+            anchors.rightMargin: parent.height / 22
+            width: parent.height / 22
+            height: parent.height / 22
+
+
+            Image {
+                id: eraser
+
+                property bool erasing: false
+
+                visible: false
+                anchors.fill: parent
+
+                source: "../../resources/eraser.png"
+                mipmap: true
+
+                ColorOverlay {
+                    anchors.fill: eraser
+                    source: eraser
+                    color: "blue"
+
+                    visible: eraser.erasing
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: eraser.erasing = !eraser.erasing
+                }
+            }
+        }
+
+        Canvas {
+            id: drawCanvas
+
+            readonly property int imgSize: width / 12
+            readonly property int boxSize: width / 24
+            property bool erasing: false
+
+            width: parent.width
+            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.fillHeight: true
+
+            SensorGesture {
+                gestures : ["QtSensors.shake"]
+                enabled: true
+
+                onDetected: {
+                    if (avatarItem.state === "5")
+                        avatarItem.state = "6"
+                }
+            }
+
+            visible: false
+
+            onPaint: {
+                var ctx = getContext('2d');
+
+                if (erasing) {
+                    ctx.fillStyle = "white"
+                    ctx.fillRect(0, 0, width, height)
+                    drawCanvas.erasing = false
+                    ctx.reset()
+                }
+
+                for (var i = 0; i < drawMouseAra.points.length; ++i) {
+                    var x = drawMouseAra.points[i].x
+                    var y = drawMouseAra.points[i].y
+                    if (avatarItem.state === "2") {
+                        ctx.drawImage (drawMouseAra.houses[i], x - (imgSize / 2.0),
+                                       y - (imgSize / 2.0), imgSize, imgSize)
+                    } else if (avatarItem.state === "6" || avatarItem.state === "7") {
+                        ctx.lineWidth = 2
+
+                        ctx.beginPath()
+                        ctx.rect (x - (drawCanvas.boxSize / 2.0), y - (drawCanvas.boxSize / 2.0), drawCanvas.boxSize, drawCanvas.boxSize)
+                        ctx.strokeStyle = "black"
+                        ctx.stroke()
+
+                        if (drawMouseAra.tachadas.indexOf(i) !== -1) {
+                            ctx.beginPath()
+                            ctx.moveTo (x - 5 -drawCanvas.boxSize / 2, y - 5 -drawCanvas.boxSize / 2)
+                            ctx.lineTo(x + drawCanvas.boxSize / 2 + 5, y + drawCanvas.boxSize / 2 + 5)
+
+                            ctx.strokeStyle = "red"
+                            ctx.stroke()
+
+                        }
+                    }
+                }
+            }
+
+            Component.onCompleted: {
+                loadImage("../../resources/houses/house1.png")
+                loadImage("../../resources/houses/house2.png")
+                loadImage("../../resources/houses/house3.png")
+                loadImage("../../resources/houses/house4.png")
+                loadImage("../../resources/houses/house5.png")
+                loadImage("../../resources/houses/house6.png")
+            }
+
+            MouseArea {
+                id: drawMouseAra
+
+                property var houses: []
+                property var points: []
+                property var tachadas: []
+
+                visible: false
+
+                anchors.fill: parent
+                onClicked: {
+                    if (avatarItem.state === "2") {
+                        if (mouseX > width - drawCanvas.imgSize / 2 || mouseX < drawCanvas.imgSize / 2 ||
+                            mouseY > height - drawCanvas.imgSize / 2 || mouseY < drawCanvas.imgSize / 2)
+                            return
+
+                        for (var i = 0; i < drawMouseAra.points.length; ++i) {
+                            if (mouseX >= points[i].x - drawCanvas.imgSize && mouseX <= points[i].x + drawCanvas.imgSize &&
+                                mouseY >= points[i].y - drawCanvas.imgSize && mouseY <= points[i].y + drawCanvas.imgSize) {
+
+                                if (eraser.erasing) {
+                                    points.splice(i, 1);
+                                    houses.splice(i, 1);
+                                    drawCanvas.erasing = true
+                                    drawCanvas.requestPaint()
+                                }
+
+                                return
+                            }
+                        }
+
+                        if (!eraser.erasing) {
+                            points.push(Qt.point(mouseX, mouseY))
+                            var houseString = "../../resources/houses/house" + Math.round(Math.random() * 5 + 1) + ".png"
+                            houses.push(houseString)
+                            drawCanvas.requestPaint()
+                        }
+                    } else if (avatarItem.state === "5" ) {
+                        avatarItem.state = "6"
+                    } else if (avatarItem.state === "7" ) {
+                        for (var j = 0; j < drawMouseAra.points.length; ++j) {
+                            if (mouseX >= points[j].x - drawCanvas.boxSize && mouseX <= points[j].x + drawCanvas.boxSize &&
+                                mouseY >= points[j].y - drawCanvas.boxSize && mouseY <= points[j].y + drawCanvas.boxSize) {
+
+                                var tindex = tachadas.indexOf(j)
+                                if (eraser.erasing) {
+                                    if (tachadas.indexOf(j) !== -1) {
+
+                                        tachadas.splice(tindex, 1);
+                                        drawCanvas.erasing = true
+                                        drawCanvas.requestPaint()
+                                    }
+                                } else {
+                                    if (tachadas.indexOf(j) === -1) {
+                                        tachadas.push(j)
+                                        drawCanvas.requestPaint()
+                                    }
+                                }
+
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Item {
+            id: avatarItem
+
+            width: parent.width
+            height: 140
+            state: "1"
+            visible: false
+
+            states: [
+                State {
+                    name: "1";
+                    PropertyChanges { target: avatarText; text: "¡Hacer problemas es sencillo\nsi los dibujamos!" }
+                },
+                State {
+                    name: "2";
+                    PropertyChanges { target: avatarText; text: "  Pulsa para dibujar las 12 casas" }
+                    PropertyChanges { target: drawMouseAra; visible: true }
+                    PropertyChanges { target: checkCasas; visible: true }
+                    PropertyChanges { target: eraser; visible: true }
+                },
+                State {
+                    name: "3";
+                    PropertyChanges { target: avatarText; text: "  Ooops ¡Parece que no es correcto!" }
+                },
+                State {
+                    name: "4";
+                    PropertyChanges { target: avatarText; text: "  ¡Genial!" }
+                    PropertyChanges { target: eraser; visible: true }
+                },
+                State {
+                    name: "5";
+                    PropertyChanges { target: drawMouseAra; visible: true }
+                    PropertyChanges { target: avatarText; text: "Un truco es que no es necesario\npintar las casas, basta\ncon representarlas unidades.\nDa una sacudida para\nsimplificar el dibujo." }
+                },
+                State {
+                    name: "6";
+                    PropertyChanges { target: avatarText; text: "  ¡Brillante!" }
+                },
+                State {
+                    name: "7";
+                    PropertyChanges { target: avatarText; text: "  Tacha tantas unidades como casas\nme quita el juez" }
+                    PropertyChanges { target: drawMouseAra; visible: true }
+                    PropertyChanges { target: checkCasas; visible: true }
+                    PropertyChanges { target: eraser; visible: true }
+                },
+                State {
+                    name: "8";
+                    PropertyChanges { target: avatarText; text: "  Ooops ¡Parece que no es correcto!" }
+                },
+                State {
+                    name: "9";
+                    PropertyChanges { target: avatarText; text: "  ¡Fantastico! Ya podemos\nresolver el problema" }
+                }
+            ]
+
+            onStateChanged: {
+                if (state === "3" || state === "4" || state === "8") {
+                    timer.interval = 1400
+                    timer.restart()
+                    return
+                }
+
+                if (state === "6") {
+                    drawCanvas.erasing = true
+                    drawCanvas.requestPaint()
+                    timer.interval = 1400
+                    timer.restart()
+                }
+
+                if (state === "9") {
+                    timer.interval = 1800
+                    timer.restart()
+                    return
+                }
+
+                if (state === "7") {
+                    appGlobal.drawPre = drawCanvas.toDataURL()
+                    return
+                }
+
+                eraser.erasing = false
+            }
+
+            Image {
+                id: avatar
+
+                property int moveMargin: 0
+
+                source: "../../resources/hatCartoon.png"
+                mipmap: true
+                height:parent.height
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: moveMargin
+                fillMode: Image.PreserveAspectFit
+
+                SequentialAnimation {
+                    running: avatarItem.state === "3" || avatarItem.state === "8"
+                    alwaysRunToEnd: true
+                    loops: Animation.Infinite
+
+                    NumberAnimation {
+                        target: avatar
+                        property: "moveMargin"
+                        from: 0
+                        to: 10
+                        duration: 60
+                    }
+
+                    NumberAnimation  {
+                        target: avatar
+                        property: "moveMargin"
+                        from: 10
+                        to: 0
+                        duration: 60
+                    }
+                }
+
+                NumberAnimation {
+                    target: avatar
+                    property: "rotation"
+                    from: 0
+                    to: 360
+                    duration: 300
+
+                    running: avatarItem.state === "4" || avatarItem.state === "6" || avatarItem.state === "9"
+                    alwaysRunToEnd: true
+                    loops: 1
+                }
+            }
+
+            Text {
+                id: avatarText
+
+                text: "¡Hacer problemas es sencillo si los dibujamos!"
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.leftMargin: avatar.width +  avatar.width * -0.35
+                font.family: "Droid Sans Mono"
+                font.pointSize: 14
+                color: "black"
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            Button {
+                id: checkCasas
+
+                text: "Ya estan todas"
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.family: "Droid Sans Mono"
+                font.pointSize: 14
+                visible: false
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 20
+
+                background: Rectangle {
+                    color: "black"
+                    radius: width / 3.2
+                }
+
+                contentItem: Text {
+                    text: checkCasas.text
+                    font: checkCasas.font
+                    color: "white"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+
+                onClicked: {
+                    if (avatarItem.state === "2") {
+                        if (drawMouseAra.points.length !== 12) {
+                            avatarItem.state = "3"
+                        } else {
+                            avatarItem.state = "4"
+                        }
+                    } else if (avatarItem.state === "7") {
+                        if (drawMouseAra.tachadas.length !== 6) {
+                            avatarItem.state = "8"
+                        } else {
+                            avatarItem.state = "9"
+                        }
+                    }
+                }
+            }
+
+            Timer {
+                id: timer
+
+                interval: 2300;
+
+                onTriggered: {
+                    if (avatarItem.state === "4") {
+                        avatarItem.state = "5"
+                        return
+                    }
+
+                    if (avatarItem.state === "6") {
+                        avatarItem.state = "7"
+                        return
+                    }
+
+                    if (avatarItem.state === "8") {
+                        avatarItem.state = "7"
+                        return
+                    }
+
+
+                    if (avatarItem.state === "9") {
+                        appGlobal.drawPost = drawCanvas.toDataURL()
+                        stackView.push("theCakeCalcDraw.qml")
+                        return
+                    }
+
+                    avatarItem.state = "2"
+                }
+            }
+        }
+
+        Item {
+            id: spacer
+
+            visible: true
             width: parent.width
             Layout.fillHeight: true
         }

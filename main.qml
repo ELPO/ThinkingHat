@@ -5,7 +5,7 @@ ApplicationWindow {
     id: window
     visible: true
     width: 640
-    height: 480
+    height: 680
     title: qsTr("Thinking Hat")
 
     font.family: "Droid Sans Mono"
@@ -16,6 +16,8 @@ ApplicationWindow {
         property string userName: ""
         property int userAge: 0
         property string avatar: ""
+        property string drawPre: ""
+        property string drawPost: ""
     }
 
     StackView {
