@@ -1,0 +1,4 @@
+Version 0.9.1:
+
+-Mejora del eleccionado del texto en el Check Understanding.
+-Inclusión de un prototipo de estrategia de abstracción del problema via pintado.
