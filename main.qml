@@ -8,8 +8,6 @@ ApplicationWindow {
     height: 680
     title: qsTr("Thinking Hat")
 
-    font.family: "Droid Sans Mono"
-
     QtObject {
         id: appGlobal
 
@@ -19,6 +17,20 @@ ApplicationWindow {
         property string drawPre: ""
         property string drawPost: ""
     }
+
+    QtObject {
+        id: appTheme
+
+        property string fontFamily: arialFont.name
+    }
+
+    FontLoader {
+        id: arialFont
+
+        source: "../resources/fonts/arial.ttf"
+    }
+
+    font.family: "Droid Sans Mono"
 
     StackView {
         id: stackView

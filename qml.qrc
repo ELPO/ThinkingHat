@@ -13,7 +13,6 @@
         <file>resources/draw.png</file>
         <file>views/problems/theCakeCalc.qml</file>
         <file>resources/eraser.png</file>
-        <file>resources/intro.avi</file>
         <file>resources/intro.3gp</file>
         <file>resources/avatars/001.png</file>
         <file>resources/avatars/002.png</file>
@@ -37,5 +36,6 @@
         <file>resources/houses/house6.png</file>
         <file>views/problems/theCakeCalcDraw.qml</file>
         <file>resources/arrow.png</file>
+        <file>resources/fonts/arial.ttf</file>
     </qresource>
 </RCC>
