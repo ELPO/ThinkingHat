@@ -62,8 +62,8 @@ Item
             text: "Bravo " + appGlobal.userName + ", you nailed it!"
 			anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 20
+            font.family: appTheme.fontFamily
+            font.pixelSize: 20
             color: "black"
             horizontalAlignment: Text.AlignHCenter
 		}
@@ -86,8 +86,8 @@ Item
                 id: continueBtn
 
                 text: "Continue Playing"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 14
+                font.family: appTheme.fontFamily
+                font.pixelSize: 14
 
                 onClicked: {
                     stackView.push("problemBoardView.qml")
@@ -117,8 +117,8 @@ Item
                 id: exitBtn
 
                 text: "Exit"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 14
+                font.family: appTheme.fontFamily
+                font.pixelSize: 14
 
                 onClicked: {
                     Qt.quit()

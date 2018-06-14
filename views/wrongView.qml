@@ -35,8 +35,8 @@ Item
             text: "Oops " + appGlobal.userName + ",\n that's not correct at all!\n Do not be discouraged and try again"
             anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 16
+            font.family: appTheme.fontFamily
+            font.pixelSize: 16
             color: "black"
             horizontalAlignment: Text.AlignHCenter
         }
@@ -53,8 +53,8 @@ Item
             text: "Hint: El juez me ha quitado casas,\npiensa que operación aritmética se relaciona con\nquitar o sustraer."
             anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 12
+            font.family: appTheme.fontFamily
+            font.pixelSize: 12
             color: "gray"
             horizontalAlignment: Text.AlignHCenter
         }
@@ -77,8 +77,8 @@ Item
                 id: continueBtn
 
                 text: "Try again"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 14
+                font.family: appTheme.fontFamily
+                font.pixelSize: 14
 
                 onClicked: {
                     stackView.push("problems/theCakeCalc.qml")
@@ -108,8 +108,8 @@ Item
                 id: exitBtn
 
                 text: "Exit"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 14
+                font.family: appTheme.fontFamily
+                font.pixelSize: 14
 
                 onClicked: {
                     Qt.quit()

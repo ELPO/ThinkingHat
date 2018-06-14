@@ -56,8 +56,8 @@ Item
         Text {
             text: "Simplified drawing"
             anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Droid Sans Mono"
-            font.pointSize: 14
+            font.family: appTheme.fontFamily
+            font.pixelSize: 14
             color: "gray"
         }
 
@@ -212,8 +212,8 @@ Item
 
                     anchors.top: parent.top
                     text: "Write your solution here"
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 14
+                    font.family: appTheme.fontFamily
+                    font.pixelSize: 14
                     color: "gray"
                 }
 
@@ -231,8 +231,8 @@ Item
                     anchors.top: space.bottom
                     height: parent.height - headerField.height - space.height
                     width: parent.width
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 80
+                    font.family: appTheme.fontFamily
+                    font.pixelSize: 80
                     horizontalAlignment: Text.AlignHCenter
 
                     background: Rectangle {
@@ -251,8 +251,8 @@ Item
 
                 text: "Submit"
                 anchors.verticalCenter: parent.verticalCenter
-                font.family: "Droid Sans Mono"
-                font.pointSize: 14
+                font.family: appTheme.fontFamily
+                font.pixelSize: 14
 
                 background: Rectangle {
                     color: submit.enabled ? "black" : "gray"

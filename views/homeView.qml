@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.3
 
 Item
 {
-
     Video {
         id: intro
 
@@ -54,7 +53,7 @@ Item
             visible: false
             anchors.horizontalCenter: parent.horizontalCenter
             height: 105
-            width: 150
+            fillMode: Image.PreserveAspectFit
             mipmap: true
             source: "../resources/mainHat.png"
         }
@@ -64,34 +63,31 @@ Item
             height: 100
         }
 
-		Text {
+        Text {
             id: introText
 
-            visible: false
-
-            text: "ThinkingHat is a game\ncreated to help kids learning\nproblem-solving skills for\nmaths and beyond."
-			anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
-            color: "black"
             horizontalAlignment: Text.AlignHCenter
-		}
-
-        Item {
-            width: parent.width
             Layout.fillHeight: true
+
+            visible: false
+            text: "ThinkingHat is a game created to help kids learning problem-solving skills for maths and beyond."
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.family: appTheme.fontFamily
+            font.pixelSize: 21
+            color: "black"
+            Layout.preferredWidth: parent.width - appTheme.margin * 2 //to do scale
+            wrapMode: Text.Wrap
         }
 
         Button {
             id: introButton
 
+            anchors.horizontalCenter: parent.horizontalCenter
+
             text: "Next"
             visible: false
-            font.family: "Droid Sans Mono"
-            font.pointSize: 14
-
-
-            anchors.horizontalCenter: parent.horizontalCenter
+            font.family: appTheme.fontFamily
+            font.pixelSize: 14
 
             onClicked: {
                 stackView.push("characterView.qml")

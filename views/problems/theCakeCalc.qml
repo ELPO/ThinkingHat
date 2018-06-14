@@ -56,8 +56,8 @@ Item
         Text {
             text: "Check understanding"
             anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Droid Sans Mono"
-            font.pointSize: 14
+            font.family: appTheme.fontFamily
+            font.pixelSize: 14
             color: "gray"
         }
 
@@ -74,8 +74,8 @@ Item
                 Text {
                     anchors.centerIn: parent
                     text: "The starting\npoint?"
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 14
+                    font.family: appTheme.fontFamily
+                    font.pixelSize: 14
                     color: "black"
                 }
             }
@@ -87,8 +87,8 @@ Item
 
             Text {
                 text: "12 casas"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 18
+                font.family: appTheme.fontFamily
+                font.pixelSize: 18
                 color: "black"
                 Layout.fillWidth: true
             }
@@ -107,8 +107,8 @@ Item
                 Text {
                     anchors.centerIn: parent
                     text: "What is the\nchanger?"
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 14
+                    font.family: appTheme.fontFamily
+                    font.pixelSize: 14
                     color: "black"
                 }
             }
@@ -120,8 +120,8 @@ Item
 
             Text {
                 text: "El juez me\nha quitado 6"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 18
+                font.family: appTheme.fontFamily
+                font.pixelSize: 18
                 color: "black"
                 Layout.fillWidth: true
             }
@@ -140,8 +140,8 @@ Item
                 Text {
                     anchors.centerIn: parent
                     text: "What is the\nunknown?"
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 14
+                    font.family: appTheme.fontFamily
+                    font.pixelSize: 14
                     color: "black"
                 }
             }
@@ -153,8 +153,8 @@ Item
 
             Text {
                 text: "Cuántas casas\nme quedan?"
-                font.family: "Droid Sans Mono"
-                font.pointSize: 18
+                font.family: appTheme.fontFamily
+                font.pixelSize: 18
                 color: "black"
                 Layout.fillWidth: true
             }
@@ -282,8 +282,8 @@ Item
 
                     anchors.top: parent.top
                     text: "Write your solution here"
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 14
+                    font.family: appTheme.fontFamily
+                    font.pixelSize: 14
                     color: "gray"
                 }
 
@@ -301,8 +301,8 @@ Item
                     anchors.top: space.bottom
                     height: parent.height - headerField.height - space.height
                     width: parent.width
-                    font.family: "Droid Sans Mono"
-                    font.pointSize: 80
+                    font.family: appTheme.fontFamily
+                    font.pixelSize: 80
                     horizontalAlignment: Text.AlignHCenter
 
                     background: Rectangle {
@@ -321,8 +321,8 @@ Item
 
                 text: "Submit"
                 anchors.verticalCenter: parent.verticalCenter
-                font.family: "Droid Sans Mono"
-                font.pointSize: 14
+                font.family: appTheme.fontFamily
+                font.pixelSize: 14
 
                 background: Rectangle {
                     color: submit.enabled ? "black" : "gray"

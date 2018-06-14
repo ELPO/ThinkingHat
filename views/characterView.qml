@@ -17,8 +17,8 @@ Item
             text: "Set up your profile"
             anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
             color: "gray"
             horizontalAlignment: Text.AlignHCenter
         }
@@ -32,8 +32,8 @@ Item
 			text: "Choose an avatar"
 			anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
             color: "black"
             horizontalAlignment: Text.AlignHCenter
 		}
@@ -101,8 +101,8 @@ Item
 		Text {
 			text: "Write your username"
 			anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
             color: "black"
             horizontalAlignment: Text.AlignHCenter
 		}
@@ -114,8 +114,8 @@ Item
 
 			placeholderText: "-"
 			horizontalAlignment : TextInput.AlignHCenter
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
 
             background: Rectangle {
                 implicitWidth: 230
@@ -128,8 +128,8 @@ Item
 		Text {
 			text: "Tell us your age"
 			anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
 		}
 
 		TextField {
@@ -139,8 +139,8 @@ Item
 			placeholderText: "-"
 			horizontalAlignment : TextInput.AlignHCenter
 			validator: IntValidator {bottom: 1; top: 150}
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
 
             background: Rectangle {
                 implicitWidth: 230
@@ -159,8 +159,8 @@ Item
             id: nextBtn
 
             text: "Next"
-            font.family: "Droid Sans Mono"
-            font.pointSize: 14
+            font.family: appTheme.fontFamily
+            font.pixelSize: 14
 
             enabled: name.text != "" && age.text != "" && Number.fromLocaleString(age.text) !== 0 && characterList.currentIndex !== -1
             anchors.horizontalCenter: parent.horizontalCenter

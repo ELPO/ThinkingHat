@@ -17,8 +17,8 @@ Item
             text: "Choose your Challenge"
             anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
             color: "gray"
             horizontalAlignment: Text.AlignHCenter
         }
@@ -50,8 +50,8 @@ Item
             text: appGlobal.userName
             anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
             color: "black"
             horizontalAlignment: Text.AlignHCenter
             font.bold: true
@@ -61,8 +61,8 @@ Item
             text: appGlobal.userAge + " years old"
             anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 16
+            font.family: appTheme.fontFamily
+            font.pixelSize: 16
             color: "black"
             horizontalAlignment: Text.AlignHCenter
         }
@@ -155,8 +155,8 @@ Item
             Text {
                 text: "Challenges"
 
-                font.family: "Droid Sans Mono"
-                font.pointSize: 12
+                font.family: appTheme.fontFamily
+                font.pixelSize: 12
                 color: "black"
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -169,8 +169,8 @@ Item
             Text {
                 text: "High Score"
 
-                font.family: "Droid Sans Mono"
-                font.pointSize: 12
+                font.family: appTheme.fontFamily
+                font.pixelSize: 12
                 color: "black"
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -242,8 +242,8 @@ Item
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
 
-                        font.family: "Droid Sans Mono"
-                        font.pointSize: 12
+                        font.family: appTheme.fontFamily
+                        font.pixelSize: 12
                         color: available ? "black" : "gray"
                         horizontalAlignment: Text.AlignHCenter
                     }
@@ -254,8 +254,8 @@ Item
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
 
-                        font.family: "Droid Sans Mono"
-                        font.pointSize: 12
+                        font.family: appTheme.fontFamily
+                        font.pixelSize: 12
                         visible: available
                         horizontalAlignment: Text.AlignHCenter
                     }
@@ -267,8 +267,8 @@ Item
             id: control
 
             text: "Go!"
-            font.family: "Droid Sans Mono"
-            font.pointSize: 14
+            font.family: appTheme.fontFamily
+            font.pixelSize: 14
             enabled: problemView.currentIndex !== -1
 
             anchors.horizontalCenter: parent.horizontalCenter

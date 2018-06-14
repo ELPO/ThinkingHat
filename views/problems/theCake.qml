@@ -72,8 +72,8 @@ Item
             Text {
                 text: "Problem 1: The Cake"
                 anchors.verticalCenter: parent.verticalCenter
-                font.family: "Droid Sans Mono"
-                font.pointSize: 14
+                font.family: appTheme.fontFamily
+                font.pixelSize: 14
                 color: "gray"
             }
 
@@ -117,23 +117,63 @@ Item
             }
         }
 
-        TextEdit {
+        Text {
             id: statment
 
-            text: "Tengo 12 casas de montaña y\nel juez me quita 6 para mi ex-\nmujer.\n\n¿Cuántas casas me quedan?"
-            selectByMouse: false
-            selectedTextColor: "black"
-            anchors.horizontalCenter: parent.horizontalCenter
-            readOnly: true
-            persistentSelection: true
+            property var distances: undefined
 
-            font.pointSize: 20
-            font.family: "Droid Sans Mono"
+            text: "Tengo 12 casas de montaña y el juez me quita 6 para mi exmujer. ¿Cuántas casas me quedan?"
+            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.preferredWidth: parent.width - appTheme.margin * 2 //to do scale
+            wrapMode: Text.Wrap
+            lineHeight: 2
+
+            font.pixelSize: appTheme.fontMedium
+            font.family: appTheme.fontFamily
 
             FontMetrics {
                 id: fontMetrics
+
                 font.family: statment.font.family
-                font.pointSize: statment.font.pointSize
+                font.pixelSize: statment.font.pixelSize
+            }
+
+            onWidthChanged: {
+                // Assumption: Window size is not editable so this is like an effective onComplete slot
+                console.log(fontMetrics.maximumCharacterWidth)
+                if (parent.width !== 0) {
+                    var myMap = [[]];
+                    var length = text.length;
+                    var line = 0
+                    var startLine = 0
+                    var startWord = 0
+
+                    for (var i = 0; i < length; i++) {
+                        if (i === 0 || text.charAt(i - 1) === " ")
+                            startWord = i
+
+                        var cursor = fontMetrics.advanceWidth(text.substring(startLine, i))
+//                        if (cursor > width && text.charAt(cursor) !== " ") {
+//                            line++
+//                            startLine = startWord
+//                            cursor = fontMetrics.advanceWidth(text.substring(startLine, i))
+//                            for (var j = startWord; j < i; j++) {
+//                                console.log("chchch " + j)
+//                                myMap[j] = [line, fontMetrics.advanceWidth(text.substring(startLine, j))]
+//                            }
+//                        }
+
+                        myMap[i] = [line, cursor];
+                    }
+
+                    for (i = 0; i < length; i++) {
+                        console.log(i + ": " + myMap[i] + " " + text.charAt(i))
+                    }
+                }
+
+                distances = myMap
+                canvas.requestPaint()
+                console.log("patata " + fontMetrics.advanceWidth(" "))
             }
 
             function evaluate() {
@@ -156,8 +196,8 @@ Item
 
 
                     Qt.createQmlObject('import QtQuick 2.10; Rectangle {x: ' + xSpace + '; y: ' + ySpace + '; color: "' + selectionColor
-                                       +'"; width: ' + (rect.width + 2)  + '; height: '+ fontMetrics.height + '; Text {anchors.centerIn: parent; font.pointSize: ' +
-                                       statment.font.pointSize + '; font.family: "Droid Sans Mono"; text: "' + trimmed +'";}}', statment)
+                                       +'"; width: ' + (rect.width + 2)  + '; height: '+ fontMetrics.height + '; Text {anchors.centerIn: parent; font.pixelSize: ' +
+                                       statment.font.pixelSize + '; font.family: appTheme.fontFamily; text: "' + trimmed +'";}}', statment)
                     deselect()
                     selectByMouse = false
                     pressDetector.visible = false
@@ -177,68 +217,121 @@ Item
                 }
             }
 
-            MouseArea {
-                id: pressDetector
-
-                visible: false
+            Canvas {
+                id: canvas
                 anchors.fill: parent
-                property int start: 0
-                property int start2: 0
-                property int end: 0
 
-                onPressed: {
-                    var letterNumber = /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
-                    var ini = statment.positionAt(mouseX, mouseY)
-                    var end = ini
-                    while (statment.getText(ini - 1 , ini).match(letterNumber)) {
-                        ini = ini - 1
+                onPaint: {
+                    var ctx = getContext('2d');
+
+                    ctx.lineWidth = 1;
+                    ctx.lineCap = "round"
+                    ctx.lineJoin ="bevel"
+                    ctx.fillStyle = "red"
+                    ctx.strokeStyle = "black"
+
+                    var rect = fontMetrics.boundingRect(statment.text)
+                    ctx.fillRect(0, fontMetrics.height, fontMetrics.advanceWidth("Tengo 12 casas de montaña y"), fontMetrics.height)
+                    //ctx.fillRect(0, fontMetrics.height, fontMetrics.averageCharacterWidth * 27, fontMetrics.height)
+
+                    for (var i = 0; i < statment.distances.length; i++) {
+                        if (statment.distances[i][0] === 0) {
+                            ctx.rect(statment.distances[i][1], fontMetrics.height, 1, fontMetrics.height)
+                        }
                     }
 
-                    start = ini
+                    ctx.stroke()
+                }
 
-                    while (statment.getText(end, end + 1).match(letterNumber)) {
-                        end = end + 1
+                MouseArea {
+                    id: pressDetector
+
+                    visible: false
+                    anchors.fill: parent
+                    property int start: 0
+                    property int start2: 0
+                    property int end: 0
+
+                    onPressed: {
+                        var lines = statment.contentHeight / fontMetrics.height
+                        var clickHeight = Math.floor(mouseY / fontMetrics.height)
+                        var line = 1
+
+                        if (clickHeight % 2 === 1) {
+                            //to do make a map
+                            for (var i = 0; i < statment.distances.length; i++) {
+                                //console.log(i + " " + (statment.distances.length - 1) + " " +  statment.text.charAt(i))
+                                if (i === (statment.distances.length - 1)) {
+                                    if (statment.distances[i][0] === Math.floor(clickHeight / 2.0) &&
+                                        statment.distances[i][1] <= mouseX) {
+                                        console.log(statment.distances[i][1] + " !!!  " + mouseX + " " + i)
+                                        console.log(i + " " + statment.text.charAt(i))
+                                    }
+                                } else {
+                                    //console.log(i)
+                                    if (statment.distances[i][0] === Math.floor(clickHeight / 2.0) &&
+                                        statment.distances[i][1] <= mouseX && (statment.distances[i+1][1] > mouseX)) {
+                                        console.log(statment.distances.length)
+                                        console.log(statment.distances[i][1] + " " + mouseX + " " + statment.distances[i+1][1])
+                                        console.log(i + " " + statment.text.charAt(i))
+                                    }
+                                }
+                            }
+                        }
+
+//                        var letterNumber = /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
+//                        var ini = statment.positionAt(mouseX, mouseY)
+//                        var end = ini
+//                        while (statment.getText(ini - 1 , ini).match(letterNumber)) {
+//                            ini = ini - 1
+//                        }
+
+//                        start = ini
+
+//                        while (statment.getText(end, end + 1).match(letterNumber)) {
+//                            end = end + 1
+//                        }
+
+//                        start2 = end
                     }
 
-                    start2 = end
-                }
+                    onMouseXChanged: {
+                        //customSelection()
+                    }
 
-                onMouseXChanged: {
-                    customSelection()
-                }
+                    onMouseYChanged: {
+                        //customSelection()
+                    }
 
-                onMouseYChanged: {
-                    customSelection()
-                }
+                    onReleased: {
+//                        start = 0
+//                        end = 0
 
-                onReleased: {
-                    start = 0
-                    end = 0
+//                        statment.evaluate()
+                    }
 
-                    statment.evaluate()
-                }
+                    function customSelection() {
+                        var letterNumber = /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
+                        var pos = statment.positionAt(mouseX, mouseY)
+                        var offset;
+                        if (pos > start) {
+                            while (statment.getText(pos, pos + 1).match(letterNumber)) {
+                                pos = pos + 1
+                            }
 
-                function customSelection() {
-                    var letterNumber = /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
-                    var pos = statment.positionAt(mouseX, mouseY)
-                    var offset;
-                    if (pos > start) {
-                        while (statment.getText(pos, pos + 1).match(letterNumber)) {
-                            pos = pos + 1
-                        }
+                            if (pos !== end) {
+                                end = pos
+                                statment.select(start, end)
+                            }
+                        } else {
+                            while (statment.getText(pos - 1, pos).match(letterNumber)) {
+                                pos = pos - 1
+                            }
 
-                        if (pos !== end) {
-                            end = pos
-                            statment.select(start, end)
-                        }
-                    } else {
-                        while (statment.getText(pos - 1, pos).match(letterNumber)) {
-                            pos = pos - 1
-                        }
-
-                        if (pos !== end) {
-                            end = pos
-                            statment.select(start2, end)
+                            if (pos !== end) {
+                                end = pos
+                                statment.select(start2, end)
+                            }
                         }
                     }
                 }
@@ -255,8 +348,8 @@ Item
 
             text: "Check understanding"
             anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Droid Sans Mono"
-            font.pointSize: 14
+            font.family: appTheme.fontFamily
+            font.pixelSize: 14
 
             background: Rectangle {
                 color: "black"
@@ -296,8 +389,8 @@ Item
 
             text: "Draw Strategy"
             anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Droid Sans Mono"
-            font.pointSize: 14
+            font.family: appTheme.fontFamily
+            font.pixelSize: 14
 
             background: Rectangle {
                 color: "black"
@@ -634,8 +727,8 @@ Item
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.leftMargin: avatar.width +  avatar.width * -0.35
-                font.family: "Droid Sans Mono"
-                font.pointSize: 14
+                font.family: appTheme.fontFamily
+                font.pixelSize: 14
                 color: "black"
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -645,8 +738,8 @@ Item
 
                 text: "Ya estan todas"
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.family: "Droid Sans Mono"
-                font.pointSize: 14
+                font.family: appTheme.fontFamily
+                font.pixelSize: 14
                 visible: false
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 20
@@ -726,8 +819,8 @@ Item
         Text {
             id: header
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 12
+            font.family: appTheme.fontFamily
+            font.pixelSize: 12
             color: "gray"
             text: "Mark the problem's structural elements"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -799,9 +892,6 @@ Item
                             onClicked: {
                                 pressDetector.visible = true
                                 cursors.currentIndex = index
-                                statment.deselect()
-                                statment.selectByMouse = true
-                                statment.selectionColor = cursorBtn.color
                             }
                         }
                     }
@@ -816,8 +906,8 @@ Item
                     Text {
                         id: name
 
-                        font.family: "Droid Sans Mono"
-                        font.pointSize: 14
+                        font.family: appTheme.fontFamily
+                        font.pixelSize: 14
                         height: cursors.buttonTextHeight
                         anchors.top: internalSpace.bottom
                         anchors.horizontalCenter: parent.horizontalCenter

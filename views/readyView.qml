@@ -17,8 +17,8 @@ Item
             text: "Ready to play!"
             anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
             color: "gray"
             horizontalAlignment: Text.AlignHCenter
         }
@@ -50,8 +50,8 @@ Item
 			text: appGlobal.userName
 			anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 18
+            font.family: appTheme.fontFamily
+            font.pixelSize: 18
             color: "black"
             horizontalAlignment: Text.AlignHCenter
             font.bold: true
@@ -61,8 +61,8 @@ Item
             text: appGlobal.userAge + " years old"
 			anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: "Droid Sans Mono"
-            font.pointSize: 16
+            font.family: appTheme.fontFamily
+            font.pixelSize: 16
             color: "black"
             horizontalAlignment: Text.AlignHCenter
 		}
@@ -76,8 +76,8 @@ Item
             id: control
 
             text: "Let's solve problems now!"
-            font.family: "Droid Sans Mono"
-            font.pointSize: 14
+            font.family: appTheme.fontFamily
+            font.pixelSize: 14
 
             anchors.horizontalCenter: parent.horizontalCenter
 
