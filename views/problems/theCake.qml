@@ -120,13 +120,14 @@ Item
         Text {
             id: statment
 
-            property var distances: undefined
+            property var distances: [[]]
+            property var lineChars: []
 
             text: "Tengo 12 casas de montaña y el juez me quita 6 para mi exmujer. ¿Cuántas casas me quedan?"
             anchors.horizontalCenter: parent.horizontalCenter
-            Layout.preferredWidth: parent.width - appTheme.margin * 2 //to do scale
             wrapMode: Text.Wrap
             lineHeight: 2
+            Layout.preferredWidth: parent.width - appTheme.margin * 2 // to do scale
 
             font.pixelSize: appTheme.fontMedium
             font.family: appTheme.fontFamily
@@ -148,32 +149,31 @@ Item
                     var startLine = 0
                     var startWord = 0
 
+                    lineChars.push(0)
+
                     for (var i = 0; i < length; i++) {
                         if (i === 0 || text.charAt(i - 1) === " ")
                             startWord = i
 
                         var cursor = fontMetrics.advanceWidth(text.substring(startLine, i))
-//                        if (cursor > width && text.charAt(cursor) !== " ") {
-//                            line++
-//                            startLine = startWord
-//                            cursor = fontMetrics.advanceWidth(text.substring(startLine, i))
-//                            for (var j = startWord; j < i; j++) {
-//                                console.log("chchch " + j)
-//                                myMap[j] = [line, fontMetrics.advanceWidth(text.substring(startLine, j))]
-//                            }
-//                        }
+                        if (cursor > width && text.charAt(cursor) !== " ") {
+                            line++
+                            startLine = startWord
+                            lineChars.push(startLine)
+                            cursor = fontMetrics.advanceWidth(text.substring(startLine, i))
+                            for (var j = startWord; j < i; j++) {
+                                myMap[j] = [line, fontMetrics.advanceWidth(text.substring(startLine, j))]
+                            }
+                        }
 
                         myMap[i] = [line, cursor];
                     }
 
-                    for (i = 0; i < length; i++) {
-                        console.log(i + ": " + myMap[i] + " " + text.charAt(i))
-                    }
+                    myMap[length] = [line, cursor + fontMetrics.advanceWidth(text.charAt(text.length - 1))]
                 }
 
                 distances = myMap
                 canvas.requestPaint()
-                console.log("patata " + fontMetrics.advanceWidth(" "))
             }
 
             function evaluate() {
@@ -219,10 +219,15 @@ Item
 
             Canvas {
                 id: canvas
+
                 anchors.fill: parent
 
                 onPaint: {
                     var ctx = getContext('2d');
+
+                    ctx.reset()
+
+                    console.log("!!! " + statment.lineChars + " " + pressDetector.start + " " + pressDetector.end )
 
                     ctx.lineWidth = 1;
                     ctx.lineCap = "round"
@@ -230,15 +235,15 @@ Item
                     ctx.fillStyle = "red"
                     ctx.strokeStyle = "black"
 
-                    var rect = fontMetrics.boundingRect(statment.text)
-                    ctx.fillRect(0, fontMetrics.height, fontMetrics.advanceWidth("Tengo 12 casas de montaña y"), fontMetrics.height)
+                    var offset = statment.lineChars[Math.floor(pressDetector.rowStart / 2.0)]
+                    var start = pressDetector.start
+                    var end = pressDetector.end
+                    ctx.fillRect(fontMetrics.advanceWidth(statment.text.substring(0, start)),
+                                 fontMetrics.height * pressDetector.rowStart,
+                                 fontMetrics.advanceWidth(statment.text.substring(start, end)),
+                                 10) //specify line height
                     //ctx.fillRect(0, fontMetrics.height, fontMetrics.averageCharacterWidth * 27, fontMetrics.height)
 
-                    for (var i = 0; i < statment.distances.length; i++) {
-                        if (statment.distances[i][0] === 0) {
-                            ctx.rect(statment.distances[i][1], fontMetrics.height, 1, fontMetrics.height)
-                        }
-                    }
 
                     ctx.stroke()
                 }
@@ -246,11 +251,13 @@ Item
                 MouseArea {
                     id: pressDetector
 
-                    visible: false
+                    visible: true
                     anchors.fill: parent
                     property int start: 0
+                    property int rowStart: 0
                     property int start2: 0
                     property int end: 0
+                    property var letterNumberER: /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
 
                     onPressed: {
                         var lines = statment.contentHeight / fontMetrics.height
@@ -259,40 +266,40 @@ Item
 
                         if (clickHeight % 2 === 1) {
                             //to do make a map
-                            for (var i = 0; i < statment.distances.length; i++) {
-                                //console.log(i + " " + (statment.distances.length - 1) + " " +  statment.text.charAt(i))
-                                if (i === (statment.distances.length - 1)) {
-                                    if (statment.distances[i][0] === Math.floor(clickHeight / 2.0) &&
-                                        statment.distances[i][1] <= mouseX) {
-                                        console.log(statment.distances[i][1] + " !!!  " + mouseX + " " + i)
-                                        console.log(i + " " + statment.text.charAt(i))
+                            for (var i = 0; i < statment.text.length; i++) {
+                                if (statment.distances[i][0] === Math.floor(clickHeight / 2.0) &&
+                                    statment.distances[i][1] <= mouseX && (statment.distances[i+1][1] > mouseX)) {
+                                    console.log(i + " b " + statment.text.charAt(i))
+                                    rowStart = clickHeight
+                                    if (statment.text.charAt(i).match(letterNumberER)) { // is character
+                                        for (var j = i; j < statment.text.length; j++) {
+                                            if (statment.distances[j][0] !== statment.distances[i][0])
+                                                break
+
+                                            if (!statment.text.charAt(j).match(letterNumberER)) {
+                                                end = j
+                                                break
+                                            }
+                                        }
+
+                                        for (j = i; j > 0; j--) {
+                                            if (statment.distances[j][0] !== statment.distances[i][0])
+                                                break
+
+                                            if (!statment.text.charAt(j).match(letterNumberER)) {
+                                                start = j + 1
+                                                break
+                                            }
+                                        }
+
+                                        if (j === 0)
+                                            start = 0
                                     }
-                                } else {
-                                    //console.log(i)
-                                    if (statment.distances[i][0] === Math.floor(clickHeight / 2.0) &&
-                                        statment.distances[i][1] <= mouseX && (statment.distances[i+1][1] > mouseX)) {
-                                        console.log(statment.distances.length)
-                                        console.log(statment.distances[i][1] + " " + mouseX + " " + statment.distances[i+1][1])
-                                        console.log(i + " " + statment.text.charAt(i))
-                                    }
+
+                                    canvas.requestPaint()
                                 }
                             }
                         }
-
-//                        var letterNumber = /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
-//                        var ini = statment.positionAt(mouseX, mouseY)
-//                        var end = ini
-//                        while (statment.getText(ini - 1 , ini).match(letterNumber)) {
-//                            ini = ini - 1
-//                        }
-
-//                        start = ini
-
-//                        while (statment.getText(end, end + 1).match(letterNumber)) {
-//                            end = end + 1
-//                        }
-
-//                        start2 = end
                     }
 
                     onMouseXChanged: {
@@ -507,7 +514,6 @@ Item
 
                             ctx.strokeStyle = "red"
                             ctx.stroke()
-
                         }
                     }
                 }

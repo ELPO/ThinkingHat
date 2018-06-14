@@ -32,7 +32,7 @@ ApplicationWindow {
         readonly property int heightScreen: Screen.height
         readonly property int hScale: Screen.width
         readonly property int vScale: Screen.height
-        readonly property string fontFamily: arialFont.name
+        readonly property string fontFamily: "Montserrat"
         readonly property string fontColorBlack: "#111111"
         readonly property string fontColorBlackSoft: "#303030"
         readonly property string fontColorGray: "#656565"
