@@ -141,9 +141,7 @@ Item
 
             onWidthChanged: {
                 // Assumption: Window size is not editable so this is like an effective onComplete slot
-                console.log(fontMetrics.maximumCharacterWidth)
                 if (parent.width !== 0) {
-                    var myMap = [[]];
                     var length = text.length;
                     var line = 0
                     var startLine = 0
@@ -151,29 +149,151 @@ Item
 
                     lineChars.push(0)
 
-                    for (var i = 0; i < length; i++) {
-                        if (i === 0 || text.charAt(i - 1) === " ")
-                            startWord = i
+                    var cur = 0
+                    while (cur < length) {
+                        startWord = cur
+                        cur = text.indexOf(" ", cur);
+                        if (cur === -1) {
+                            if (fontMetrics.advanceWidth(text.substring(startLine, length - 1)) > width) {
+                                line++
+                                startLine = startWord
+                                lineChars.push(startLine - 1)
+                            }
 
-                        var cursor = fontMetrics.advanceWidth(text.substring(startLine, i))
-                        if (cursor > width && text.charAt(cursor) !== " ") {
+                            distances.push([line,
+                                            fontMetrics.advanceWidth(text.substring(startLine, startWord)),
+                                            fontMetrics.advanceWidth(text.substring(startLine, length))])
+                            break;
+                        }
+
+                        if (fontMetrics.advanceWidth(text.substring(startLine, cur - 1)) > width) {
                             line++
                             startLine = startWord
                             lineChars.push(startLine - 1)
-                            cursor = fontMetrics.advanceWidth(text.substring(startLine, i))
-                            for (var j = startWord; j < i; j++) {
-                                myMap[j] = [line, fontMetrics.advanceWidth(text.substring(startLine, j))]
-                            }
                         }
 
-                        myMap[i] = [line, cursor];
+                        distances.push([line,
+                                        fontMetrics.advanceWidth(text.substring(startLine, startWord)),
+                                        fontMetrics.advanceWidth(text.substring(startLine, cur))])
+
+                        cur++
                     }
 
-                    myMap[length] = [line, cursor + fontMetrics.advanceWidth(text.charAt(text.length - 1))]
+                    for (var i = 0; i < statment.distances.length; i++) {
+                        console.log(distances[i][1] + " " + distances[i][2])
+                    }
+                }
+            }
+
+            Canvas {
+                id: canvas
+
+                anchors.fill: parent
+                clip: true
+
+                onPaint: {
+                    var ctx = getContext('2d');
+
+                    ctx.reset()
+
+                    ctx.lineWidth = 10;
+                    ctx.lineCap = "round"
+                    ctx.lineJoin ="bevel"
+                    ctx.fillStyle = ctx.createPattern("../../resources/textures/crayon3.PNG", "repeat-x")
+                    ctx.strokeStyle = ctx.createPattern("../../resources/textures/crayon3.PNG", "repeat")
+
+                    if (pressDetector.startWord !== -1) {
+                        ctx.moveTo(statment.distances[pressDetector.startWord][1],
+                                   fontMetrics.height + 2 + fontMetrics.height * statment.distances[pressDetector.startWord][0] * 2)
+                        ctx.lineTo(statment.distances[pressDetector.endWord][2] ,
+                                   fontMetrics.height + 2 + fontMetrics.height * statment.distances[pressDetector.startWord][0] * 2)
+
+//                        ctx.fillRect(statment.distances[pressDetector.startWord][1],
+//                                     fontMetrics.height + fontMetrics.height * statment.distances[pressDetector.startWord][0] * 2,
+//                                     statment.distances[pressDetector.endWord][2] - statment.distances[pressDetector.startWord][1],
+//                                     10) //specify line height
+
+                        ctx.stroke()
+                    }
                 }
 
-                distances = myMap
-                canvas.requestPaint()
+                Component.onCompleted: loadImage("../../resources/textures/crayon.PNG")
+
+                MouseArea {
+                    id: pressDetector
+
+                    visible: true
+                    anchors.fill: parent
+                    property int start: -1
+                    property int rowStart: -1
+                    property int start2: 0
+                    property int end: -1
+                    property int startWord: -1
+                    property int endWord: -1
+                    property var letterNumberER: /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡.-]+$/;
+
+                    onPressed: clickSelection()
+
+                    onMouseXChanged: {
+                        moveSelection()
+                    }
+
+                    onMouseYChanged: {
+                        //customSelection()
+                    }
+
+                    onReleased: {
+                        start = -1
+                        end = -1
+                        rowStart = -1
+
+//                        statment.evaluate()
+                    }
+
+                    function moveSelection() {
+                        var clickHeight = Math.floor(mouseY / fontMetrics.height)
+
+                        if (clickHeight % 2 === 1) {
+                            //to do make a map
+                            var len = statment.text.length
+
+                            for (var i = 0; i < statment.distances.length; i++) {
+                                var row = statment.distances[i][0]
+                                if (row === Math.floor(clickHeight / 2.0) &&
+                                    statment.distances[i][1] <= mouseX && (statment.distances[i][2] > mouseX)) {
+                                    console.log(i)
+                                    if (i !== endWord) {
+                                        endWord = i
+                                        canvas.requestPaint()
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    function clickSelection() {
+                        var clickHeight = Math.floor(mouseY / fontMetrics.height)
+
+                        if (clickHeight % 2 === 1) {
+                            //to do make a map
+                            var len = statment.text.length
+
+                            for (var i = 0; i < statment.distances.length; i++) {
+                                var row = statment.distances[i][0]
+                                if (row === Math.floor(clickHeight / 2.0) &&
+                                    statment.distances[i][1] <= mouseX && (statment.distances[i][2] > mouseX)) {
+                                    if (i !== startWord) {
+                                        startWord = i
+                                        endWord = i
+                                        canvas.requestPaint()
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             function evaluate() {
@@ -213,137 +333,6 @@ Item
 
                     if (results.uCond === true && results.sCond === true && results.cCond === true) {
                         screen.solved = true
-                    }
-                }
-            }
-
-            Canvas {
-                id: canvas
-
-                anchors.fill: parent
-
-                onPaint: {
-                    var ctx = getContext('2d');
-
-                    ctx.reset()
-
-                    ctx.lineWidth = 1;
-                    ctx.lineCap = "round"
-                    ctx.lineJoin ="bevel"
-                    ctx.fillStyle = "red"
-                    ctx.strokeStyle = "black"
-
-                    var offset = statment.lineChars[Math.floor(pressDetector.rowStart / 2.0)] + (pressDetector.rowStart !== 1 ? 1 : 0)
-                    console.log("!!! " + statment.lineChars + " " + pressDetector.rowStart + " " + offset)
-                    console.log(statment.text.substring(offset, pressDetector.start) + "| |" + statment.text.substring(pressDetector.start, pressDetector.end))
-                    ctx.fillRect(fontMetrics.advanceWidth(statment.text.substring(offset, pressDetector.start)),
-                                 fontMetrics.height * pressDetector.rowStart,
-                                 fontMetrics.advanceWidth(statment.text.substring(pressDetector.start, pressDetector.end)),
-                                 10) //specify line height
-                    //ctx.fillRect(0, fontMetrics.height, fontMetrics.averageCharacterWidth * 27, fontMetrics.height)
-
-
-                    ctx.stroke()
-                }
-
-                MouseArea {
-                    id: pressDetector
-
-                    visible: true
-                    anchors.fill: parent
-                    property int start: 0
-                    property int rowStart: 0
-                    property int start2: 0
-                    property int end: 0
-                    property var letterNumberER: /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡.-]+$/;
-
-                    onPressed: {
-                        var clickHeight = Math.floor(mouseY / fontMetrics.height)
-
-                        if (clickHeight % 2 === 1) {
-                            //to do make a map
-                            var len = statment.text.length
-                            for (var i = 0; i < len; i++) {
-                                var row = statment.distances[i][0]
-                                if (row === Math.floor(clickHeight / 2.0) &&
-                                    statment.distances[i][1] <= mouseX && (statment.distances[i+1][1] > mouseX)) {
-                                    rowStart = clickHeight
-                                    if (statment.text.charAt(i).match(letterNumberER)) { // is character
-                                        for (var j = i; j < len; j++) {
-                                            if (statment.distances[j][0] !== row)
-                                                break
-
-                                            if (!statment.text.charAt(j).match(letterNumberER)) {
-                                                end = j
-                                                break
-                                            }
-
-                                            if (j === len - 1) {
-                                                end = j + 1
-                                            }
-                                        }
-
-                                        for (j = i; j > 0; j--) {
-                                            if (statment.distances[j][0] !== row)
-                                                break
-
-                                            if (!statment.text.charAt(j).match(letterNumberER)) {
-                                                start = j + 1
-                                                break
-                                            }
-                                        }
-
-                                        if (j === 0)
-                                            start = 0
-                                        else if (statment.lineChars.indexOf(j) !== -1) {
-                                            start = j + 1
-                                        }
-                                    }
-
-                                    canvas.requestPaint()
-                                }
-                            }
-                        }
-                    }
-
-                    onMouseXChanged: {
-                        //customSelection()
-                    }
-
-                    onMouseYChanged: {
-                        //customSelection()
-                    }
-
-                    onReleased: {
-//                        start = 0
-//                        end = 0
-
-//                        statment.evaluate()
-                    }
-
-                    function customSelection() {
-                        var letterNumber = /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
-                        var pos = statment.positionAt(mouseX, mouseY)
-                        var offset;
-                        if (pos > start) {
-                            while (statment.getText(pos, pos + 1).match(letterNumber)) {
-                                pos = pos + 1
-                            }
-
-                            if (pos !== end) {
-                                end = pos
-                                statment.select(start, end)
-                            }
-                        } else {
-                            while (statment.getText(pos - 1, pos).match(letterNumber)) {
-                                pos = pos - 1
-                            }
-
-                            if (pos !== end) {
-                                end = pos
-                                statment.select(start2, end)
-                            }
-                        }
                     }
                 }
             }
