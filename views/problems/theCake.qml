@@ -159,7 +159,7 @@ Item
                         if (cursor > width && text.charAt(cursor) !== " ") {
                             line++
                             startLine = startWord
-                            lineChars.push(startLine)
+                            lineChars.push(startLine - 1)
                             cursor = fontMetrics.advanceWidth(text.substring(startLine, i))
                             for (var j = startWord; j < i; j++) {
                                 myMap[j] = [line, fontMetrics.advanceWidth(text.substring(startLine, j))]
@@ -227,20 +227,18 @@ Item
 
                     ctx.reset()
 
-                    console.log("!!! " + statment.lineChars + " " + pressDetector.start + " " + pressDetector.end )
-
                     ctx.lineWidth = 1;
                     ctx.lineCap = "round"
                     ctx.lineJoin ="bevel"
                     ctx.fillStyle = "red"
                     ctx.strokeStyle = "black"
 
-                    var offset = statment.lineChars[Math.floor(pressDetector.rowStart / 2.0)]
-                    var start = pressDetector.start
-                    var end = pressDetector.end
-                    ctx.fillRect(fontMetrics.advanceWidth(statment.text.substring(0, start)),
+                    var offset = statment.lineChars[Math.floor(pressDetector.rowStart / 2.0)] + (pressDetector.rowStart !== 1 ? 1 : 0)
+                    console.log("!!! " + statment.lineChars + " " + pressDetector.rowStart + " " + offset)
+                    console.log(statment.text.substring(offset, pressDetector.start) + "| |" + statment.text.substring(pressDetector.start, pressDetector.end))
+                    ctx.fillRect(fontMetrics.advanceWidth(statment.text.substring(offset, pressDetector.start)),
                                  fontMetrics.height * pressDetector.rowStart,
-                                 fontMetrics.advanceWidth(statment.text.substring(start, end)),
+                                 fontMetrics.advanceWidth(statment.text.substring(pressDetector.start, pressDetector.end)),
                                  10) //specify line height
                     //ctx.fillRect(0, fontMetrics.height, fontMetrics.averageCharacterWidth * 27, fontMetrics.height)
 
@@ -257,33 +255,36 @@ Item
                     property int rowStart: 0
                     property int start2: 0
                     property int end: 0
-                    property var letterNumberER: /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡-]+$/;
+                    property var letterNumberER: /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡.-]+$/;
 
                     onPressed: {
-                        var lines = statment.contentHeight / fontMetrics.height
                         var clickHeight = Math.floor(mouseY / fontMetrics.height)
-                        var line = 1
 
                         if (clickHeight % 2 === 1) {
                             //to do make a map
-                            for (var i = 0; i < statment.text.length; i++) {
-                                if (statment.distances[i][0] === Math.floor(clickHeight / 2.0) &&
+                            var len = statment.text.length
+                            for (var i = 0; i < len; i++) {
+                                var row = statment.distances[i][0]
+                                if (row === Math.floor(clickHeight / 2.0) &&
                                     statment.distances[i][1] <= mouseX && (statment.distances[i+1][1] > mouseX)) {
-                                    console.log(i + " b " + statment.text.charAt(i))
                                     rowStart = clickHeight
                                     if (statment.text.charAt(i).match(letterNumberER)) { // is character
-                                        for (var j = i; j < statment.text.length; j++) {
-                                            if (statment.distances[j][0] !== statment.distances[i][0])
+                                        for (var j = i; j < len; j++) {
+                                            if (statment.distances[j][0] !== row)
                                                 break
 
                                             if (!statment.text.charAt(j).match(letterNumberER)) {
                                                 end = j
                                                 break
                                             }
+
+                                            if (j === len - 1) {
+                                                end = j + 1
+                                            }
                                         }
 
                                         for (j = i; j > 0; j--) {
-                                            if (statment.distances[j][0] !== statment.distances[i][0])
+                                            if (statment.distances[j][0] !== row)
                                                 break
 
                                             if (!statment.text.charAt(j).match(letterNumberER)) {
@@ -294,6 +295,9 @@ Item
 
                                         if (j === 0)
                                             start = 0
+                                        else if (statment.lineChars.indexOf(j) !== -1) {
+                                            start = j + 1
+                                        }
                                     }
 
                                     canvas.requestPaint()
