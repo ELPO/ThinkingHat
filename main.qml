@@ -41,6 +41,9 @@ ApplicationWindow {
         readonly property string fontColorBlue: "#4a90e2"
         readonly property string fontColorRed: "#f0495e"
         readonly property string fontColorOrange: "#F5A623"
+        readonly property string  colorUnknown: "#FFFF01"
+        readonly property string  colorStartingPoint: "#b6e8e5"
+        readonly property string  colorChanger: "#F0A9ED"
         readonly property int fontHuge: 32
         readonly property int fontGrand: 28
         readonly property int fontBig: 23
@@ -60,7 +63,7 @@ ApplicationWindow {
 
     StackView {
         id: stackView
-        initialItem: "views/problems/theCake.qml"
+        initialItem: "views/homeView.qml"
         anchors.fill: parent
     }
 }

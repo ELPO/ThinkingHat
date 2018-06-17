@@ -12,7 +12,7 @@ Item
     property bool solved: false
 
     onSolvedChanged: {
-        if (solved) {er
+        if (solved) {
             check.text = "Let's do the math"
             check.visible = true
         }
@@ -161,7 +161,9 @@ Item
 
                             distances.push([line,
                                             fontMetrics.advanceWidth(text.substring(startLine, startWord)),
-                                            fontMetrics.advanceWidth(text.substring(startLine, length))])
+                                            fontMetrics.advanceWidth(text.substring(startLine, length)),
+                                            startWord,
+                                            length])
                             break;
                         }
 
@@ -169,12 +171,13 @@ Item
                             line++
                             lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, startWord - 1)))
                             startLine = startWord
-                            console.log(lineswidth[lineswidth.length - 1])
                         }
 
                         distances.push([line,
                                         fontMetrics.advanceWidth(text.substring(startLine, startWord)),
-                                        fontMetrics.advanceWidth(text.substring(startLine, cur))])
+                                        fontMetrics.advanceWidth(text.substring(startLine, cur)),
+                                        startWord,
+                                        cur])
 
                         precur = cur
                         cur++
@@ -185,49 +188,62 @@ Item
             Canvas {
                 id: canvas
 
-                readonly property int margin: 20
-                width: parent.width + margin
-                height: parent.height + margin
-                x: -margin / 2
-                y: -margin / 2
+                readonly property int margin: 10
+                property var validated: []
+
+                width: parent.width + margin * 2
+                height: parent.height + margin * 2
+                x: -margin
+                y: -margin
                 clip: true
 
                 onPaint: {
                     var ctx = getContext('2d');
 
                     ctx.reset()
-
                     ctx.lineWidth = 10;
                     ctx.lineCap = "round"
                     ctx.lineJoin ="bevel"
-                    ctx.fillStyle = ctx.createPattern("../../resources/textures/crayon3.PNG", "repeat-x")
-                    ctx.strokeStyle = ctx.createPattern("../../resources/textures/crayon3.PNG", "repeat")
-
-//                    ctx.fillRect(0,
-//                                 0,
-//                                 width,
-//                                 height)
 
                     if (pressDetector.startWord !== -1) {
+                        ctx.strokeStyle = cursors.color
+                        ctx.beginPath()
                         for (var i = pressDetector.startLine; i <= pressDetector.endLine; i++) {
                             var start = i === pressDetector.startLine ? statment.distances[pressDetector.startWord][1] : 0
                             var end = i === pressDetector.endLine ? statment.distances[pressDetector.endWord][2] : statment.lineswidth[i]
                             var h = fontMetrics.height + 4 + fontMetrics.height * i * 2
-                            //console.log(start + " " + end + " " + h)
-                            ctx.moveTo(start + margin / 2, h + margin / 2)
-                            ctx.lineTo(end + margin / 2, h + margin / 2)
+                            ctx.moveTo(start + margin, h + margin)
+                            ctx.lineTo(end + margin, h + margin)
                         }
+
+                        ctx.stroke()
                     }
 
-                    ctx.stroke()
-                }
 
-                Component.onCompleted: loadImage("../../resources/textures/crayon.PNG")
+                    for (var j = 0; j < validated.length; j++) {
+                        var startLine = validated[j][0]
+                        var endLine = validated[j][1]
+                        var startWord = validated[j][2]
+                        var endWord = validated[j][3]
+                        ctx.strokeStyle = validated[j][4]
+
+                        ctx.beginPath()
+                        for (var k = startLine; k <= endLine; k++) {
+                            start = k === startLine ? statment.distances[startWord][1] : 0
+                            end = k === endLine ? statment.distances[endWord][2] : statment.lineswidth[i]
+                            h = fontMetrics.height + 4 + fontMetrics.height * k * 2
+                            ctx.moveTo(start + margin, h + margin)
+                            ctx.lineTo(end + margin, h + margin)
+                        }
+
+                        ctx.stroke()
+                    }
+                }
 
                 MouseArea {
                     id: pressDetector
 
-                    visible: true
+                    visible: false
                     anchors.fill: parent
 
                     property int wordOrigin: -1
@@ -249,18 +265,18 @@ Item
                     }
 
                     onReleased: {
+                        statment.evaluate()
                         startWord = -1
                         lineOrigin = -1
                         endWord = -1
                         wordOrigin = -1
                         startLine = -1
                         endLine = -1
-//                        statment.evaluate()
                     }
 
                     function moveSelection() {
-                        var mouseX = pressDetector.mouseX - canvas.margin / 2
-                        var mouseY = pressDetector.mouseY - canvas.margin / 2
+                        var mouseX = pressDetector.mouseX - canvas.margin
+                        var mouseY = pressDetector.mouseY - canvas.margin
                         var clickHeight = Math.floor(mouseY / fontMetrics.height)
 
                         if (clickHeight % 2 === 1) {
@@ -269,7 +285,8 @@ Item
                             for (var i = 0; i < statment.distances.length; i++) {
                                 var row = statment.distances[i][0]
                                 if (row === Math.floor(clickHeight / 2.0) &&
-                                    statment.distances[i][1] <= mouseX && (statment.distances[i][2] > mouseX)) {
+                                    statment.distances[i][1] <= mouseX &&
+                                    (statment.distances[i][2] > mouseX)) {
                                     if (row > lineOrigin) {
                                         endLine = row
                                         endWord = i
@@ -279,7 +296,7 @@ Item
                                     } else {
                                         startLine = lineOrigin
                                         endLine = lineOrigin
-                                        console.log("yes")
+
                                         if (i < wordOrigin) {
                                             startWord = i
                                             endWord = wordOrigin
@@ -300,8 +317,8 @@ Item
                     }
 
                     function clickSelection() {
-                        var mouseX = pressDetector.mouseX - canvas.margin / 2
-                        var mouseY = pressDetector.mouseY - canvas.margin / 2
+                        var mouseX = pressDetector.mouseX - canvas.margin
+                        var mouseY = pressDetector.mouseY - canvas.margin
                         var clickHeight = Math.floor(mouseY / fontMetrics.height)
 
                         if (clickHeight % 2 === 1) {
@@ -329,26 +346,14 @@ Item
             }
 
             function evaluate() {
+                if (pressDetector.startWord === - 1 || pressDetector.endWord === -1)
+                    return
+
                 var butidx = cursors.currentIndex;
-                var trimmed = selectedText.trim()
-                if (validate(trimmed)) {
-                    var pre = text.substring(0, text.indexOf(trimmed))
-                    var truePre = pre.substring(pre.lastIndexOf("\n"))
+                var selectedText = statment.text.substring(statment.distances[pressDetector.startWord][3],
+                                                           statment.distances[pressDetector.endWord][4])
+                if (validate(selectedText)) {
 
-                    var stringsearch = "\n";
-                    var count = -1;
-                    for (var index = 0; index != -1; count++, index = pre.indexOf(stringsearch, index + 1));
-
-                    var ySpace = fontMetrics.height * count;
-                    var rect = fontMetrics.boundingRect(trimmed)
-                    var xSpace = Qt.platform.os === "android" ? fontMetrics.advanceWidth(truePre) :
-                                                                fontMetrics.advanceWidth(truePre)
-
-                    Qt.createQmlObject('import QtQuick 2.10; Rectangle {x: ' + xSpace + '; y: ' + ySpace + '; color: "' + selectionColor
-                                       +'"; width: ' + (rect.width + 2)  + '; height: '+ fontMetrics.height + '; Text {anchors.centerIn: parent; font.pixelSize: ' +
-                                       statment.font.pixelSize + '; font.family: appTheme.fontFamily; text: "' + trimmed +'";}}', statment)
-                    deselect()
-                    selectByMouse = false
                     pressDetector.visible = false
 
                     if (butidx === 0)
@@ -358,11 +363,19 @@ Item
                     else if (butidx === 2)
                         results.cCond = true
 
+                    canvas.validated.push([pressDetector.startLine,
+                                           pressDetector.endLine,
+                                           pressDetector.startWord,
+                                           pressDetector.endWord,
+                                           cursors.color])
+
                     cursors.currentIndex = -1
 
                     if (results.uCond === true && results.sCond === true && results.cCond === true) {
                         screen.solved = true
                     }
+                } else {
+                    canvas.requestPaint()
                 }
             }
         }
@@ -400,6 +413,7 @@ Item
                     draw.visible = false
                     header.visible = true
                     buttons.visible = true
+                    pressDetector.visible = true
                 } else {
                     stackView.push("theCakeCalc.qml")
                 }
@@ -869,6 +883,7 @@ Item
                 property int buttonTextHeight: 40
                 property int internalSpaceHeight: 15
                 property int itemHeight: buttonSize + buttonTextHeight + internalSpaceHeight
+                property string color: currentIndex === 0 ?  "#FFFF01" : (currentIndex === 1 ? "#b6e8e5" : "#F0A9ED")
 
                 orientation: Qt.Horizontal
                 width: itemHeight * 3 + spacing * 2
@@ -940,7 +955,7 @@ Item
                         anchors.top: internalSpace.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
                         horizontalAlignment: Text.AlignHCenter
-                        text: index === 0 ? "Unknow" : (index === 1 ? "Starting\nPoint" : "Changer")
+                        text: index === 0 ? "Unknown" : (index === 1 ? "Starting\nPoint" : "Changer")
                     }
                 }
             }
