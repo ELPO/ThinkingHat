@@ -12,7 +12,7 @@ Item
     property bool solved: false
 
     onSolvedChanged: {
-        if (solved) {
+        if (solved) {er
             check.text = "Let's do the math"
             check.visible = true
         }
@@ -121,7 +121,7 @@ Item
             id: statment
 
             property var distances: [[]]
-            property var lineChars: []
+            property var lineswidth: []
 
             text: "Tengo 12 casas de montaña y el juez me quita 6 para mi exmujer. ¿Cuántas casas me quedan?"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -147,9 +147,9 @@ Item
                     var startLine = 0
                     var startWord = 0
 
-                    lineChars.push(0)
 
                     var cur = 0
+                    var precur = 0
                     while (cur < length) {
                         startWord = cur
                         cur = text.indexOf(" ", cur);
@@ -157,7 +157,6 @@ Item
                             if (fontMetrics.advanceWidth(text.substring(startLine, length - 1)) > width) {
                                 line++
                                 startLine = startWord
-                                lineChars.push(startLine - 1)
                             }
 
                             distances.push([line,
@@ -168,19 +167,17 @@ Item
 
                         if (fontMetrics.advanceWidth(text.substring(startLine, cur - 1)) > width) {
                             line++
+                            lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, startWord - 1)))
                             startLine = startWord
-                            lineChars.push(startLine - 1)
+                            console.log(lineswidth[lineswidth.length - 1])
                         }
 
                         distances.push([line,
                                         fontMetrics.advanceWidth(text.substring(startLine, startWord)),
                                         fontMetrics.advanceWidth(text.substring(startLine, cur))])
 
+                        precur = cur
                         cur++
-                    }
-
-                    for (var i = 0; i < statment.distances.length; i++) {
-                        console.log(distances[i][1] + " " + distances[i][2])
                     }
                 }
             }
@@ -188,7 +185,11 @@ Item
             Canvas {
                 id: canvas
 
-                anchors.fill: parent
+                readonly property int margin: 20
+                width: parent.width + margin
+                height: parent.height + margin
+                x: -margin / 2
+                y: -margin / 2
                 clip: true
 
                 onPaint: {
@@ -202,19 +203,23 @@ Item
                     ctx.fillStyle = ctx.createPattern("../../resources/textures/crayon3.PNG", "repeat-x")
                     ctx.strokeStyle = ctx.createPattern("../../resources/textures/crayon3.PNG", "repeat")
 
+//                    ctx.fillRect(0,
+//                                 0,
+//                                 width,
+//                                 height)
+
                     if (pressDetector.startWord !== -1) {
-                        ctx.moveTo(statment.distances[pressDetector.startWord][1],
-                                   fontMetrics.height + 2 + fontMetrics.height * statment.distances[pressDetector.startWord][0] * 2)
-                        ctx.lineTo(statment.distances[pressDetector.endWord][2] ,
-                                   fontMetrics.height + 2 + fontMetrics.height * statment.distances[pressDetector.startWord][0] * 2)
-
-//                        ctx.fillRect(statment.distances[pressDetector.startWord][1],
-//                                     fontMetrics.height + fontMetrics.height * statment.distances[pressDetector.startWord][0] * 2,
-//                                     statment.distances[pressDetector.endWord][2] - statment.distances[pressDetector.startWord][1],
-//                                     10) //specify line height
-
-                        ctx.stroke()
+                        for (var i = pressDetector.startLine; i <= pressDetector.endLine; i++) {
+                            var start = i === pressDetector.startLine ? statment.distances[pressDetector.startWord][1] : 0
+                            var end = i === pressDetector.endLine ? statment.distances[pressDetector.endWord][2] : statment.lineswidth[i]
+                            var h = fontMetrics.height + 4 + fontMetrics.height * i * 2
+                            //console.log(start + " " + end + " " + h)
+                            ctx.moveTo(start + margin / 2, h + margin / 2)
+                            ctx.lineTo(end + margin / 2, h + margin / 2)
+                        }
                     }
+
+                    ctx.stroke()
                 }
 
                 Component.onCompleted: loadImage("../../resources/textures/crayon.PNG")
@@ -224,10 +229,11 @@ Item
 
                     visible: true
                     anchors.fill: parent
-                    property int start: -1
-                    property int rowStart: -1
-                    property int start2: 0
-                    property int end: -1
+
+                    property int wordOrigin: -1
+                    property int lineOrigin: -1
+                    property int startLine: -1
+                    property int endLine: -1
                     property int startWord: -1
                     property int endWord: -1
                     property var letterNumberER: /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡.-]+$/;
@@ -243,36 +249,59 @@ Item
                     }
 
                     onReleased: {
-                        start = -1
-                        end = -1
-                        rowStart = -1
-
+                        startWord = -1
+                        lineOrigin = -1
+                        endWord = -1
+                        wordOrigin = -1
+                        startLine = -1
+                        endLine = -1
 //                        statment.evaluate()
                     }
 
                     function moveSelection() {
+                        var mouseX = pressDetector.mouseX - canvas.margin / 2
+                        var mouseY = pressDetector.mouseY - canvas.margin / 2
                         var clickHeight = Math.floor(mouseY / fontMetrics.height)
 
                         if (clickHeight % 2 === 1) {
-                            //to do make a map
                             var len = statment.text.length
 
                             for (var i = 0; i < statment.distances.length; i++) {
                                 var row = statment.distances[i][0]
                                 if (row === Math.floor(clickHeight / 2.0) &&
                                     statment.distances[i][1] <= mouseX && (statment.distances[i][2] > mouseX)) {
-                                    console.log(i)
-                                    if (i !== endWord) {
+                                    if (row > lineOrigin) {
+                                        endLine = row
                                         endWord = i
-                                        canvas.requestPaint()
-                                        break;
+                                    } else if (row < lineOrigin) {
+                                        startLine = row
+                                        startWord = i                                   
+                                    } else {
+                                        startLine = lineOrigin
+                                        endLine = lineOrigin
+                                        console.log("yes")
+                                        if (i < wordOrigin) {
+                                            startWord = i
+                                            endWord = wordOrigin
+                                        } else if (i > wordOrigin) {
+                                            endWord = i
+                                            startWord = wordOrigin
+                                        } else {
+                                            startWord = i
+                                            endWord = i
+                                        }
                                     }
+
+                                    canvas.requestPaint()
+                                    break
                                 }
                             }
                         }
                     }
 
                     function clickSelection() {
+                        var mouseX = pressDetector.mouseX - canvas.margin / 2
+                        var mouseY = pressDetector.mouseY - canvas.margin / 2
                         var clickHeight = Math.floor(mouseY / fontMetrics.height)
 
                         if (clickHeight % 2 === 1) {
@@ -282,13 +311,16 @@ Item
                             for (var i = 0; i < statment.distances.length; i++) {
                                 var row = statment.distances[i][0]
                                 if (row === Math.floor(clickHeight / 2.0) &&
-                                    statment.distances[i][1] <= mouseX && (statment.distances[i][2] > mouseX)) {
-                                    if (i !== startWord) {
-                                        startWord = i
-                                        endWord = i
-                                        canvas.requestPaint()
-                                        break;
-                                    }
+                                    statment.distances[i][1] <= mouseX &&
+                                    (statment.distances[i][2] > mouseX)) {
+                                    lineOrigin = row
+                                    startLine = row
+                                    endLine = row
+                                    wordOrigin = i
+                                    startWord = i
+                                    endWord = i
+                                    canvas.requestPaint()
+                                    break;
                                 }
                             }
                         }
@@ -311,9 +343,6 @@ Item
                     var rect = fontMetrics.boundingRect(trimmed)
                     var xSpace = Qt.platform.os === "android" ? fontMetrics.advanceWidth(truePre) :
                                                                 fontMetrics.advanceWidth(truePre)
-
-                    console.log(xSpace + " " + ySpace + " " + rect)
-
 
                     Qt.createQmlObject('import QtQuick 2.10; Rectangle {x: ' + xSpace + '; y: ' + ySpace + '; color: "' + selectionColor
                                        +'"; width: ' + (rect.width + 2)  + '; height: '+ fontMetrics.height + '; Text {anchors.centerIn: parent; font.pixelSize: ' +
