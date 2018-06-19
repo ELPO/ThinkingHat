@@ -154,6 +154,7 @@ Item
                         cur = text.indexOf(" ", cur);
                         if (cur === -1) {
                             if (fontMetrics.advanceWidth(text.substring(startLine, length - 1)) > width) {
+                                lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, precur)))
                                 line++
                                 startLine = startWord
                             }
@@ -187,11 +188,11 @@ Item
             Canvas {
                 id: canvas
 
-                readonly property int margin: 0
+                readonly property int margin: 10
                 property var validated: []
 
                 width: parent.width + margin * 2
-                height: parent.height + margin * 2
+                height: parent.height + margin * 2 + fontMetrics.height / 2.0
                 x: -margin
                 y: -margin
                 clip: true
@@ -208,9 +209,11 @@ Item
                         ctx.strokeStyle = cursors.color
                         ctx.beginPath()
                         for (var i = pressDetector.startLine; i <= pressDetector.endLine; i++) {
+
                             var start = i === pressDetector.startLine ? statment.distances[pressDetector.startWord][1] : 0
                             var end = i === pressDetector.endLine ? statment.distances[pressDetector.endWord][2] : statment.lineswidth[i]
                             var h = fontMetrics.height + 4 + fontMetrics.height * i * 2
+                            console.log(statment.lineswidth[i] + " " + start + " " + end + " " + h)
                             ctx.moveTo(start + margin, h + margin)
                             ctx.lineTo(end + margin, h + margin)
                         }
@@ -226,6 +229,7 @@ Item
                         ctx.strokeStyle = validated[j][4]
 
                         ctx.beginPath()
+
                         for (var k = startLine; k <= endLine; k++) {
                             start = k === startLine ? statment.distances[startWord][1] : 0
                             end = k === endLine ? statment.distances[endWord][2] : statment.lineswidth[i]
