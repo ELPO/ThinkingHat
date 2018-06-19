@@ -146,10 +146,9 @@ Item
                     var line = 0
                     var startLine = 0
                     var startWord = 0
-
-
                     var cur = 0
                     var precur = 0
+
                     while (cur < length) {
                         startWord = cur
                         cur = text.indexOf(" ", cur);
@@ -167,7 +166,7 @@ Item
                             break;
                         }
 
-                        if (fontMetrics.advanceWidth(text.substring(startLine, cur - 1)) > width) {
+                        if (fontMetrics.advanceWidth(text.substring(startLine, cur)) > width) {
                             line++
                             lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, startWord - 1)))
                             startLine = startWord
@@ -188,7 +187,7 @@ Item
             Canvas {
                 id: canvas
 
-                readonly property int margin: 10
+                readonly property int margin: 0
                 property var validated: []
 
                 width: parent.width + margin * 2
@@ -218,7 +217,6 @@ Item
 
                         ctx.stroke()
                     }
-
 
                     for (var j = 0; j < validated.length; j++) {
                         var startLine = validated[j][0]
@@ -260,10 +258,6 @@ Item
                         moveSelection()
                     }
 
-                    onMouseYChanged: {
-                        //customSelection()
-                    }
-
                     onReleased: {
                         statment.evaluate()
                         startWord = -1
@@ -278,6 +272,10 @@ Item
                         var mouseX = pressDetector.mouseX - canvas.margin
                         var mouseY = pressDetector.mouseY - canvas.margin
                         var clickHeight = Math.floor(mouseY / fontMetrics.height)
+
+                        if (clickHeight % 2 === 0 && mouseY - clickHeight * fontMetrics.height < fontMetrics.height / 2.0) {
+                            clickHeight--
+                        }
 
                         if (clickHeight % 2 === 1) {
                             var len = statment.text.length
@@ -320,6 +318,10 @@ Item
                         var mouseX = pressDetector.mouseX - canvas.margin
                         var mouseY = pressDetector.mouseY - canvas.margin
                         var clickHeight = Math.floor(mouseY / fontMetrics.height)
+
+                        if (clickHeight % 2 === 0 && mouseY - clickHeight * fontMetrics.height < fontMetrics.height / 2.0) {
+                            clickHeight--
+                        }
 
                         if (clickHeight % 2 === 1) {
                             //to do make a map
