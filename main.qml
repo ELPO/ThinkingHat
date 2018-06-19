@@ -32,7 +32,7 @@ ApplicationWindow {
         readonly property int heightScreen: Screen.height
         readonly property int hScale: Screen.width
         readonly property int vScale: Screen.height
-        readonly property string fontFamily: "Montserrat"
+        readonly property string fontFamily: montserrat
         readonly property string fontColorBlack: "#111111"
         readonly property string fontColorBlackSoft: "#303030"
         readonly property string fontColorGray: "#656565"
@@ -54,16 +54,16 @@ ApplicationWindow {
     }
 
     FontLoader {
-        id: arialFont
+        id: montserrat
 
-        source: "../resources/fonts/arial.ttf"
+        source: "../resources/fonts/Montserrat-Medium.ttf"
     }
 
     font.family: appTheme.fontFamily
 
     StackView {
         id: stackView
-        initialItem: "views/homeView.qml"
+        initialItem: "views/problems/theCake.qml"
         anchors.fill: parent
     }
 }
