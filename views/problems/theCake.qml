@@ -203,12 +203,13 @@ Item
                     var ctx = getContext('2d');
 
                     ctx.reset()
-                    ctx.lineWidth = 10;
+                    ctx.lineWidth = 6
                     ctx.lineCap = "round"
-                    ctx.lineJoin ="bevel"
+                    ctx.shadowBlur = 4
 
                     if (pressDetector.startWord !== -1) {
                         ctx.strokeStyle = cursors.color
+                        ctx.shadowColor = cursors.color
                         ctx.beginPath()
 
                         for (var i = pressDetector.startLine; i <= pressDetector.endLine; i++) {
@@ -228,6 +229,7 @@ Item
                         var startWord = validated[j][2]
                         var endWord = validated[j][3]
                         ctx.strokeStyle = validated[j][4]
+                        ctx.shadowColor = validated[j][4]
                         ctx.beginPath()
 
                         for (var k = startLine; k <= endLine; k++) {
