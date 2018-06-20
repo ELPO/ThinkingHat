@@ -21,6 +21,10 @@ ApplicationWindow {
         property string avatar: ""
         property string drawPre: ""
         property string drawPost: ""
+        property string problemStatment: "Tengo 12 casas de montaña y el juez me quita 6 para mi exmujer. ¿Cuántas casas me quedan?"
+        property var problemUnkown: ["¿Cuántas casas me quedan?"]
+        property var problemStartingPoint: ["12 casas", "12 casas de montaña"]
+        property var problemChanger: ["me quita 6", "quita 6"]
     }
 
     QtObject {
@@ -32,7 +36,7 @@ ApplicationWindow {
         readonly property int heightScreen: Screen.height
         readonly property int hScale: Screen.width
         readonly property int vScale: Screen.height
-        readonly property string fontFamily: montserrat
+        readonly property string fontFamily: "Montserrat"
         readonly property string fontColorBlack: "#111111"
         readonly property string fontColorBlackSoft: "#303030"
         readonly property string fontColorGray: "#656565"

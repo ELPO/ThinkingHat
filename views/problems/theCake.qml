@@ -35,23 +35,19 @@ Item
         property bool cCond: false
     }
 
-    function validate(text)
+    // 0 equal, 1 partial rest false
+    function validate(text, reference)
     {
-        if (cursors.currentIndex == 0) {
-            if (text === "¿Cuántas casas me quedan?")
-                return true
-            else return false;
-        } else if (cursors.currentIndex == 1) {
-            if (text === "12 casas" || text === "12 casas de montaña")
-                return true
-            else return false;
-        } else if (cursors.currentIndex == 2) {
-            if (text === "quita 6" || text === "me quita 6")
-                return true
-            else return false;
+        var ret = -1
+        for (var i = 0; i < reference.length; i++) {
+            if (text === reference[i])
+                return 0
+            else if (reference[i].includes(text))
+                ret = 1
+
         }
 
-        return false;
+        return ret
     }
 
     ColumnLayout {
@@ -124,7 +120,7 @@ Item
             property var lineswidth: []
             property var lastWords: []
 
-            text: "Tengo 12 casas de montaña y el juez me quita 6 para mi exmujer. ¿Cuántas casas me quedan?"
+            text: appGlobal.problemStatment
             anchors.horizontalCenter: parent.horizontalCenter
             wrapMode: Text.Wrap
             lineHeight: 2
@@ -231,12 +227,11 @@ Item
                         var startWord = validated[j][2]
                         var endWord = validated[j][3]
                         ctx.strokeStyle = validated[j][4]
-
                         ctx.beginPath()
 
                         for (var k = startLine; k <= endLine; k++) {
                             start = k === startLine ? statment.distances[startWord][1] : 0
-                            end = k === endLine ? statment.distances[endWord][2] : statment.lineswidth[i]
+                            end = k === endLine ? statment.distances[endWord][2] : statment.lineswidth[j]
                             h = fontMetrics.height + 4 + fontMetrics.height * k * 2
                             ctx.moveTo(start + margin, h + margin)
                             ctx.lineTo(end + margin, h + margin)
@@ -260,10 +255,15 @@ Item
                     property int endWord: -1
                     property var letterNumberER: /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡.-]+$/;
                     property bool clickFlag: false
+                    property bool selectionGoing: false
 
                     onPressed: {
-                        clickFlag = true
-                        clickSelection()
+                        if (selectionGoing)
+                            appendSelection()
+                        else {
+                            clickFlag = true
+                            clickSelection()
+                        }
                     }
 
                     onMouseXChanged: {
@@ -275,12 +275,80 @@ Item
 
                     onReleased: {
                         statment.evaluate()
+                        if (!selectionGoing) {
+                            reset()
+                        }
+                    }
+
+                    function reset() {
+                        selectionGoing = false
                         startWord = -1
                         lineOrigin = -1
                         endWord = -1
                         wordOrigin = -1
                         startLine = -1
                         endLine = -1
+                    }
+
+                    function appendSelection() {
+                        var mouseX = pressDetector.mouseX - canvas.margin
+                        var mouseY = pressDetector.mouseY - canvas.margin
+                        var clickHeight = Math.floor(mouseY / fontMetrics.height)
+
+                        if (clickHeight % 2 === 0 &&
+                            mouseY - clickHeight * fontMetrics.height < fontMetrics.height / 2.0)
+                            clickHeight--
+
+                        if (clickHeight % 2 === 1) {
+                            var len = statment.text.length
+
+                            for (var i = 0; i < statment.distances.length; i++) {
+                                var row = statment.distances[i][0]
+                                if (row === Math.floor(clickHeight / 2.0)){
+                                    if ((statment.lineswidth[row] < mouseX) &&
+                                            mouseX < width - canvas.margin * 2 &&
+                                            row !== lineOrigin && lineOrigin !== -1) {
+                                        if (lineOrigin < row) {
+                                            endLine = row
+                                            endWord = statment.lastWords[row]
+                                        } else {
+                                            startWord = statment.lastWords[row]
+                                            startLine = row
+                                        }
+
+                                        canvas.requestPaint()
+                                        break
+                                    }
+                                    else if (statment.distances[i][1] <= mouseX &&
+                                             (statment.distances[i][2] > mouseX)) {
+                                        if (row > lineOrigin) {
+                                            endLine = row
+                                            endWord = i
+                                        } else if (row < lineOrigin) {
+                                            startLine = row
+                                            startWord = i
+                                        } else {
+                                            startLine = lineOrigin
+                                            endLine = lineOrigin
+
+                                            if (i < wordOrigin) {
+                                                startWord = i
+                                                endWord = wordOrigin
+                                            } else if (i > wordOrigin) {
+                                                endWord = i
+                                                startWord = wordOrigin
+                                            } else {
+                                                startWord = i
+                                                endWord = i
+                                            }
+                                        }
+
+                                        canvas.requestPaint()
+                                        break
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     function moveSelection() {
@@ -385,8 +453,16 @@ Item
                 var butidx = cursors.currentIndex;
                 var selectedText = statment.text.substring(statment.distances[pressDetector.startWord][3],
                                                            statment.distances[pressDetector.endWord][4])
-                if (validate(selectedText)) {
+                var refText = ""
+                if (butidx === 0)
+                    refText = appGlobal.problemUnkown
+                else if (butidx === 1)
+                    refText = appGlobal.problemStartingPoint
+                else if (butidx === 2)
+                    refText = appGlobal.problemChanger
 
+                var result = validate(selectedText, refText)
+                if (result === 0) {
                     pressDetector.visible = false
 
                     if (butidx === 0)
@@ -407,9 +483,10 @@ Item
                     if (results.uCond === true && results.sCond === true && results.cCond === true) {
                         screen.solved = true
                     }
-                } else {
+                } else if (result !== 1) {
+                    pressDetector.selectionGoing = false
                     canvas.requestPaint()
-                }
+                } else pressDetector.selectionGoing = true
             }
         }
 
@@ -967,6 +1044,9 @@ Item
                             onClicked: {
                                 pressDetector.visible = true
                                 cursors.currentIndex = index
+
+                                pressDetector.reset()
+                                canvas.requestPaint()
                             }
                         }
                     }
