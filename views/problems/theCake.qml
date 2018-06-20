@@ -122,6 +122,7 @@ Item
 
             property var distances: [[]]
             property var lineswidth: []
+            property var lastWords: []
 
             text: "Tengo 12 casas de montaña y el juez me quita 6 para mi exmujer. ¿Cuántas casas me quedan?"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -154,11 +155,12 @@ Item
                         cur = text.indexOf(" ", cur);
                         if (cur === -1) {
                             if (fontMetrics.advanceWidth(text.substring(startLine, length - 1)) > width) {
-                                lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, precur)))
+                                lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, precur)))                             
                                 line++
                                 startLine = startWord
                             }
 
+                            lastWords.push(distances.length - 1)
                             distances.push([line,
                                             fontMetrics.advanceWidth(text.substring(startLine, startWord)),
                                             fontMetrics.advanceWidth(text.substring(startLine, length)),
@@ -170,6 +172,7 @@ Item
                         if (fontMetrics.advanceWidth(text.substring(startLine, cur)) > width) {
                             line++
                             lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, startWord - 1)))
+                            lastWords.push(distances.length - 1)
                             startLine = startWord
                         }
 
@@ -182,13 +185,16 @@ Item
                         precur = cur
                         cur++
                     }
+
+                    lastWords.push(distances.length - 1)
+                    lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, text.length - 1)))
                 }
             }
 
             Canvas {
                 id: canvas
 
-                readonly property int margin: 0
+                readonly property int margin: 20
                 property var validated: []
 
                 width: parent.width + margin * 2
@@ -209,11 +215,9 @@ Item
                         ctx.strokeStyle = cursors.color
                         ctx.beginPath()
                         for (var i = pressDetector.startLine; i <= pressDetector.endLine; i++) {
-
                             var start = i === pressDetector.startLine ? statment.distances[pressDetector.startWord][1] : 0
                             var end = i === pressDetector.endLine ? statment.distances[pressDetector.endWord][2] : statment.lineswidth[i]
                             var h = fontMetrics.height + 4 + fontMetrics.height * i * 2
-                            console.log(statment.lineswidth[i] + " " + start + " " + end + " " + h)
                             ctx.moveTo(start + margin, h + margin)
                             ctx.lineTo(end + margin, h + margin)
                         }
@@ -255,11 +259,18 @@ Item
                     property int startWord: -1
                     property int endWord: -1
                     property var letterNumberER: /^[0-9a-zA-Zñáéíóúäëïöü¿?!¡.-]+$/;
+                    property bool clickFlag: false
 
-                    onPressed: clickSelection()
+                    onPressed: {
+                        clickFlag = true
+                        clickSelection()
+                    }
 
                     onMouseXChanged: {
-                        moveSelection()
+                        if (clickFlag)
+                            clickFlag = false
+                        else
+                            moveSelection()
                     }
 
                     onReleased: {
@@ -277,42 +288,58 @@ Item
                         var mouseY = pressDetector.mouseY - canvas.margin
                         var clickHeight = Math.floor(mouseY / fontMetrics.height)
 
-                        if (clickHeight % 2 === 0 && mouseY - clickHeight * fontMetrics.height < fontMetrics.height / 2.0) {
+                        if (clickHeight % 2 === 0 &&
+                            mouseY - clickHeight * fontMetrics.height < fontMetrics.height / 2.0)
                             clickHeight--
-                        }
 
                         if (clickHeight % 2 === 1) {
                             var len = statment.text.length
 
                             for (var i = 0; i < statment.distances.length; i++) {
                                 var row = statment.distances[i][0]
-                                if (row === Math.floor(clickHeight / 2.0) &&
-                                    statment.distances[i][1] <= mouseX &&
-                                    (statment.distances[i][2] > mouseX)) {
-                                    if (row > lineOrigin) {
-                                        endLine = row
-                                        endWord = i
-                                    } else if (row < lineOrigin) {
-                                        startLine = row
-                                        startWord = i                                   
-                                    } else {
-                                        startLine = lineOrigin
-                                        endLine = lineOrigin
+                                if (row === Math.floor(clickHeight / 2.0)){
+                                    if ((statment.lineswidth[row] < mouseX) &&
+                                            mouseX < width - canvas.margin * 2 &&
+                                            row !== lineOrigin && lineOrigin !== -1) {
+                                        if (lineOrigin < row) {
+                                            endLine = row
+                                            endWord = statment.lastWords[row]
 
-                                        if (i < wordOrigin) {
-                                            startWord = i
-                                            endWord = wordOrigin
-                                        } else if (i > wordOrigin) {
-                                            endWord = i
-                                            startWord = wordOrigin
                                         } else {
-                                            startWord = i
-                                            endWord = i
+                                            startWord = statment.lastWords[row]
+                                            startLine = row
                                         }
-                                    }
 
-                                    canvas.requestPaint()
-                                    break
+                                        canvas.requestPaint()
+                                        break
+                                    }
+                                    else if (statment.distances[i][1] <= mouseX &&
+                                             (statment.distances[i][2] > mouseX)) {
+                                        if (row > lineOrigin) {
+                                            endLine = row
+                                            endWord = i
+                                        } else if (row < lineOrigin) {
+                                            startLine = row
+                                            startWord = i
+                                        } else {
+                                            startLine = lineOrigin
+                                            endLine = lineOrigin
+
+                                            if (i < wordOrigin) {
+                                                startWord = i
+                                                endWord = wordOrigin
+                                            } else if (i > wordOrigin) {
+                                                endWord = i
+                                                startWord = wordOrigin
+                                            } else {
+                                                startWord = i
+                                                endWord = i
+                                            }
+                                        }
+
+                                        canvas.requestPaint()
+                                        break
+                                    }
                                 }
                             }
                         }
