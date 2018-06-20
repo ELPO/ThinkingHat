@@ -210,6 +210,7 @@ Item
                     if (pressDetector.startWord !== -1) {
                         ctx.strokeStyle = cursors.color
                         ctx.beginPath()
+
                         for (var i = pressDetector.startLine; i <= pressDetector.endLine; i++) {
                             var start = i === pressDetector.startLine ? statment.distances[pressDetector.startWord][1] : 0
                             var end = i === pressDetector.endLine ? statment.distances[pressDetector.endWord][2] : statment.lineswidth[i]
@@ -270,7 +271,11 @@ Item
                         if (clickFlag)
                             clickFlag = false
                         else
-                            moveSelection()
+                            if (selectionGoing)
+                                appendSelection()
+                            else {
+                                appendSelection()
+                            }
                     }
 
                     onReleased: {
@@ -333,10 +338,8 @@ Item
 
                                             if (i < wordOrigin) {
                                                 startWord = i
-                                                endWord = wordOrigin
                                             } else if (i > wordOrigin) {
                                                 endWord = i
-                                                startWord = wordOrigin
                                             } else {
                                                 startWord = i
                                                 endWord = i
@@ -351,6 +354,7 @@ Item
                         }
                     }
 
+                    //  test for remove
                     function moveSelection() {
                         var mouseX = pressDetector.mouseX - canvas.margin
                         var mouseY = pressDetector.mouseY - canvas.margin
