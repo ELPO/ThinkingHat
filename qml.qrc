@@ -41,5 +41,6 @@
         <file>resources/textures/crayon2.PNG</file>
         <file>resources/textures/crayon3.PNG</file>
         <file>resources/fonts/Montserrat-Medium.ttf</file>
+        <file>resources/problems/data.json</file>
     </qresource>
 </RCC>

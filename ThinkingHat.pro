@@ -29,4 +29,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    resources/houses/house6.png
+    resources/houses/house6.png \
+    resources/problems/data.json
