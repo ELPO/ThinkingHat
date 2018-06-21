@@ -9,7 +9,7 @@ Item
         id: intro
 
         anchors.fill: parent
-        source: "../resources/intro.3gp" // "../resources/intro.avi"
+        source: "../../resources/intro.3gp" // "../../resources/intro.avi"
         state: "play"
 
         onStopped: {
@@ -55,7 +55,7 @@ Item
             height: 105
             fillMode: Image.PreserveAspectFit
             mipmap: true
-            source: "../resources/mainHat.png"
+            source: "../../resources/mainHat.png"
         }
 
         Item {

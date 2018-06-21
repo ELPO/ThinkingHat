@@ -214,7 +214,7 @@ Item
                         id: lock
 
                         mipmap: true
-                        source: "../resources/lock.png"
+                        source: "../../resources/lock.png"
                         anchors.left: parent.left
                         anchors.leftMargin: 15
                         width: 15
@@ -227,7 +227,7 @@ Item
                         id: hat
 
                         mipmap: true
-                        source: "../resources/hat.png"
+                        source: "../../resources/hat.png"
                         anchors.left: parent.left
                         anchors.leftMargin: 15
                         width: 20

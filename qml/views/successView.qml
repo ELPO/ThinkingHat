@@ -6,7 +6,7 @@ Item
 {
     ColumnLayout {
 
-        anchors.fill: parent
+		anchors.fill: parent
 
         Item {
             width: parent.width
@@ -14,13 +14,40 @@ Item
         }
 
         Image {
-            id: mistake
+            id: trophy
 
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 200
-            height: 200
+            width: 0
+            height: 0
+            fillMode: Image.PreserveAspectCrop
 
-            source: "../resources/sad.png"
+            source: "../../resources/trophy.png"
+
+
+            NumberAnimation on width {
+                from: 0
+                to: 250
+
+                duration: 800
+            }
+
+            NumberAnimation on height{
+                from: 0
+                to: 250
+
+                duration: 800
+
+                onStopped: {
+                    congratulaText.visible = true
+                }
+            }
+
+            NumberAnimation on rotation{
+                from: 0
+                to: 360
+
+                duration: 800
+            }
         }
 
         Item {
@@ -28,36 +55,18 @@ Item
             height: 30
         }
 
-        Text {
+		Text {
             id: congratulaText
 
-            visible: true
-            text: "Oops " + appGlobal.userName + ",\n that's not correct at all!\n Do not be discouraged and try again"
-            anchors.horizontalCenter: parent.horizontalCenter
+            visible: false
+            text: "Bravo " + appGlobal.userName + ", you nailed it!"
+			anchors.horizontalCenter: parent.horizontalCenter
 
             font.family: appTheme.fontFamily
-            font.pixelSize: 16
+            font.pixelSize: 20
             color: "black"
             horizontalAlignment: Text.AlignHCenter
-        }
-
-        Item {
-            width: parent.width
-            height: 20
-        }
-
-        Text {
-            id: hint
-
-            visible: true
-            text: "Hint: El juez me ha quitado casas,\npiensa que operación aritmética se relaciona con\nquitar o sustraer."
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            font.family: appTheme.fontFamily
-            font.pixelSize: 12
-            color: "gray"
-            horizontalAlignment: Text.AlignHCenter
-        }
+		}
 
         Item{
             width: parent.width
@@ -76,12 +85,12 @@ Item
             Button {
                 id: continueBtn
 
-                text: "Try again"
+                text: "Continue Playing"
                 font.family: appTheme.fontFamily
                 font.pixelSize: 14
 
                 onClicked: {
-                    stackView.push("problems/theCakeCalc.qml")
+                    stackView.push("problemBoardView.qml")
                 }
 
                 background: Rectangle {
@@ -141,5 +150,5 @@ Item
             width: parent.width
             height: 30
         }
-    }
+	}
 }

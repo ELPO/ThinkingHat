@@ -76,7 +76,7 @@ Item
 
             Image {
                 anchors.centerIn: parent
-                source: "../../resources/arrow.png"
+                source: "../../../resources/arrow.png"
                 anchors.right: parent.right
                 height: 40
                 fillMode: Image.PreserveAspectFit
@@ -178,7 +178,7 @@ Item
                         width: parent.height / 1.5
                         height: parent.height / 1.5
 
-                        source: "../../resources/eraser.png"
+                        source: "../../../resources/eraser.png"
                         mipmap: true
 
                         MouseArea {

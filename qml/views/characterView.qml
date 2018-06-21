@@ -73,13 +73,13 @@ Item
 
                     source: {
                         if (index === 0)
-                            return "../resources/avatars/001.png"
+                            return "../../resources/avatars/001.png"
                         else if (index === 1)
-                            return "../resources/avatars/002.png"
+                            return "../../resources/avatars/002.png"
                         else if (index === 2)
-                            return "../resources/avatars/003.png"
+                            return "../../resources/avatars/003.png"
                         else if (index === 3)
-                            return "../resources/avatars/004.png"
+                            return "../../resources/avatars/004.png"
                     }
                 }
 
@@ -170,13 +170,13 @@ Item
                 appGlobal.userAge = Number.fromLocaleString(age.text)
 
                 if (characterList.currentIndex === 0)
-                    appGlobal.avatar = "../resources/avatars/001.png"
+                    appGlobal.avatar = "../../resources/avatars/001.png"
                 else if (characterList.currentIndex === 1)
-                    appGlobal.avatar = "../resources/avatars/002.png"
+                    appGlobal.avatar = "../../resources/avatars/002.png"
                 else if (characterList.currentIndex === 2)
-                    appGlobal.avatar = "../resources/avatars/003.png"
+                    appGlobal.avatar = "../../resources/avatars/003.png"
                 else if (characterList.currentIndex === 3)
-                    appGlobal.avatar = "../resources/avatars/004.png"
+                    appGlobal.avatar = "../../resources/avatars/004.png"
 
                 stackView.push("readyView.qml")
             }

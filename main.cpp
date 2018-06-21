@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     qDebug() << "hola" << sd.toJson(QJsonDocument::Compact).toStdString().c_str();
 
     QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 

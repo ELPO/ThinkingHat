@@ -248,7 +248,7 @@ Item
                         width: parent.height / 1.5
                         height: parent.height / 1.5
 
-                        source: "../../resources/eraser.png"
+                        source: "../../../resources/eraser.png"
                         mipmap: true
 
                         MouseArea {

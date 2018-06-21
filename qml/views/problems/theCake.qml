@@ -21,7 +21,7 @@ Item
     Audio {
         id: audio
 
-        source: "../../resources/problema1.wav"
+        source: "../../../../resources/problema1.wav"
         onStopped: {
             playSound.enabled = true
         }
@@ -93,7 +93,7 @@ Item
                     anchors.centerIn: parent
                     fillMode: Image.PreserveAspectFit
                     width: parent.width / 1.8
-                    source: "../../resources/audio.png"
+                    source: "../../../../resources/audio.png"
                     mipmap: true
                 }
 
@@ -592,7 +592,7 @@ Item
                 visible: false
                 anchors.fill: parent
 
-                source: "../../resources/eraser.png"
+                source: "../../../../resources/eraser.png"
                 mipmap: true
 
                 ColorOverlay {
@@ -671,12 +671,12 @@ Item
             }
 
             Component.onCompleted: {
-                loadImage("../../resources/houses/house1.png")
-                loadImage("../../resources/houses/house2.png")
-                loadImage("../../resources/houses/house3.png")
-                loadImage("../../resources/houses/house4.png")
-                loadImage("../../resources/houses/house5.png")
-                loadImage("../../resources/houses/house6.png")
+                loadImage("../../../../resources/houses/house1.png")
+                loadImage("../../../../resources/houses/house2.png")
+                loadImage("../../../../resources/houses/house3.png")
+                loadImage("../../../../resources/houses/house4.png")
+                loadImage("../../../../resources/houses/house5.png")
+                loadImage("../../../../resources/houses/house6.png")
             }
 
             MouseArea {
@@ -712,7 +712,7 @@ Item
 
                         if (!eraser.erasing) {
                             points.push(Qt.point(mouseX, mouseY))
-                            var houseString = "../../resources/houses/house" + Math.round(Math.random() * 5 + 1) + ".png"
+                            var houseString = "../../../../resources/houses/house" + Math.round(Math.random() * 5 + 1) + ".png"
                             houses.push(houseString)
                             drawCanvas.requestPaint()
                         }
@@ -834,7 +834,7 @@ Item
 
                 property int moveMargin: 0
 
-                source: "../../resources/hatCartoon.png"
+                source: "../../../../resources/hatCartoon.png"
                 mipmap: true
                 height:parent.height
                 anchors.bottom: parent.bottom
@@ -1032,12 +1032,12 @@ Item
                             width: parent.width / 1.8
                             source: {
                                 if (index === 0 && results.uCond)
-                                    return "../../resources/check.png"
+                                    return "../../../../resources/check.png"
                                 else if (index === 1 && results.sCond)
-                                    return "../../resources/check.png"
+                                    return "../../../../resources/check.png"
                                 else if (index === 2  && results.cCond)
-                                    return "../../resources/check.png"
-                                else return "../../resources/draw.png"
+                                    return "../../../../resources/check.png"
+                                else return "../../../../resources/draw.png"
                             }
 
                             mipmap: true
