@@ -86,11 +86,12 @@ Item
             }
 
             Text {
-                text: "12 casas"
+                text: appGlobal.problem
                 font.family: appTheme.fontFamily
                 font.pixelSize: 18
                 color: "black"
                 Layout.fillWidth: true
+                wrapMode: Text.WordWrap
             }
         }
 
@@ -339,7 +340,7 @@ Item
                 }
 
                 onClicked: {
-                    if (Number.fromLocaleString(solution.text) === 6) {
+                    if (Number.fromLocaleString(solution.text) === appGlobal.problemSolution) {
                         stackView.push("../successView.qml")
                     } else {
                         stackView.push("../wrongView.qml")

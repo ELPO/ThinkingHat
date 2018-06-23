@@ -10,6 +10,8 @@ ApplicationWindow {
     height: appTheme.refHeightScreen
     maximumHeight: height
     maximumWidth: width
+    minimumHeight: height
+    minimumWidth: width
 
     title: qsTr("Thinking Hat")
 
@@ -21,10 +23,11 @@ ApplicationWindow {
         property string avatar: ""
         property string drawPre: ""
         property string drawPost: ""
-        property string problemStatment: "Tengo 12 casas de montaña y el juez me quita 6 para mi exmujer. ¿Cuántas casas me quedan?"
-        property var problemUnkown: ["¿Cuántas casas me quedan?"]
-        property var problemStartingPoint: ["12 casas", "12 casas de montaña"]
-        property var problemChanger: ["me quita 6", "quita 6"]
+        property string problemStatment: ""
+        property var problemUnkown: []
+        property var problemStartingPoint: []
+        property var problemChanger: []
+        property int problemSolution: -1
     }
 
     QtObject {
@@ -67,7 +70,7 @@ ApplicationWindow {
 
     StackView {
         id: stackView
-        initialItem: "views/problems/theCake.qml"
+        initialItem: "views/homeView.qml"
         anchors.fill: parent
     }
 }

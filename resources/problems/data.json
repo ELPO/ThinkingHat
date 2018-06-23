@@ -13,7 +13,7 @@
             "name": "The Looter",
             "statment": "Madre ha horneado 20 magdalenas. ¿Cuántas magdalenas quedan para mi si mis 2 hermanos mayores ya se han comido 8 magdalenas cada uno?",
             "unknown": ["¿Cuántas magdalenas quedan para mi", "¿Cuántas magdalenas quedan"],
-            "starting": ["20 magdalenas", "Madre ha horneado 20 magdalenas"],
+            "starting": ["20 magdalenas.", "Madre ha horneado 20 magdalenas."],
             "changer": ["mis 2 hermanos mayores ya se han comido 8 magdalenas cada uno?"],
 			"solution": 4
 		}

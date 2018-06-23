@@ -72,76 +72,6 @@ Item
             height: 20
         }
 
-        ListModel {
-            id: problemModel
-
-            ListElement {
-                name: "The Cake"
-                available: true
-                completed: false
-            }
-
-            ListElement {
-                name: "Tidy Tommy"
-                available: false
-                completed: false
-            }
-
-            ListElement {
-                name: "The Traffic"
-                available: false
-                completed: false
-            }
-
-            ListElement {
-                name: "Playground"
-                available: false
-                completed: false
-            }
-
-            ListElement {
-                name: "Magnets"
-                available: false
-                completed: false
-            }
-
-            ListElement {
-                name: "Another story"
-                available: false
-                completed: false
-            }
-
-            ListElement {
-                name: "Tidy Tommy 2"
-                available: false
-                completed: false
-            }
-
-            ListElement {
-                name: "The Traffic 2"
-                available: false
-                completed: false
-            }
-
-            ListElement {
-                name: "Playground 2"
-                available: false
-                completed: false
-            }
-
-            ListElement {
-                name: "Magnets 2"
-                available: false
-                completed: false
-            }
-
-            ListElement {
-                name: "Another story 2"
-                available: false
-                completed: false
-            }
-        }
-
         RowLayout {
 
             width: parent.width
@@ -188,7 +118,7 @@ Item
             ListView {
                 id: problemView
 
-                model: problemModel
+                model: problemsModel
                 anchors.fill: parent
                 anchors.topMargin: 30
                 anchors.bottomMargin: 30
@@ -203,25 +133,25 @@ Item
 
                     MouseArea {
                         anchors.fill: parent
-                        visible: available
+                        visible: true
 
                         onClicked: {
                             problemView.currentIndex = index
                         }
                     }
 
-                    Image {
-                        id: lock
+//                    Image {
+//                        id: lock
 
-                        mipmap: true
-                        source: "../../resources/lock.png"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 15
-                        width: 15
-                        height: 15
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: !available
-                    }
+//                        mipmap: true
+//                        source: "../../resources/lock.png"
+//                        anchors.left: parent.left
+//                        anchors.leftMargin: 15
+//                        width: 15
+//                        height: 15
+//                        anchors.verticalCenter: parent.verticalCenter
+//                        visible: !available
+//                    }
 
                     Image {
                         id: hat
@@ -233,7 +163,7 @@ Item
                         width: 20
                         height: 20
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: available && index === problemView.currentIndex
+                        visible: index === problemView.currentIndex
                     }
 
                     Text {
@@ -244,21 +174,21 @@ Item
 
                         font.family: appTheme.fontFamily
                         font.pixelSize: 12
-                        color: available ? "black" : "gray"
+                        color: "black"
                         horizontalAlignment: Text.AlignHCenter
                     }
 
-                    Text {
-                        text: completed ? "0" : "-"
-                        anchors.rightMargin: 80
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
+//                    Text {
+//                        text: completed ? "0" : "-"
+//                        anchors.rightMargin: 80
+//                        anchors.right: parent.right
+//                        anchors.verticalCenter: parent.verticalCenter
 
-                        font.family: appTheme.fontFamily
-                        font.pixelSize: 12
-                        visible: available
-                        horizontalAlignment: Text.AlignHCenter
-                    }
+//                        font.family: appTheme.fontFamily
+//                        font.pixelSize: 12
+//                        visible: available
+//                        horizontalAlignment: Text.AlignHCenter
+//                    }
                 }
             }
         }
@@ -274,6 +204,11 @@ Item
             anchors.horizontalCenter: parent.horizontalCenter
 
             onClicked: {
+                appGlobal.problemStatment = problemsModel.getStatment(problemView.currentIndex)
+                appGlobal.problemUnkown = problemsModel.getUnknown(problemView.currentIndex)
+                appGlobal.problemStartingPoint = problemsModel.getStarting(problemView.currentIndex)
+                appGlobal.problemChanger = problemsModel.getChanger(problemView.currentIndex)
+                appGlobal.problemSolution = problemsModel.getSolution(problemView.currentIndex)
                 stackView.push("problems/theCake.qml")
             }
 

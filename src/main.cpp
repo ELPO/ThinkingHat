@@ -1,34 +1,22 @@
-#include "FuelFilterApplication.h"
+#include "ThinkingHatApplication.h"
 #include "InstanceGuard.h"
 
-#include <QGuiApplication>
 #include <QDebug>
 
 namespace
 {
-    const QString APPLICATION_NAME = "FuelFilter";
-    const QString FUELFILTER_VERSION = "1.0.0";
+const QString APPLICATION_NAME = "ThinkingHat";
+const QString FUELFILTER_VERSION = "0.9.1";
 }
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setOrganizationName("Fuel3D");
-    QCoreApplication::setOrganizationDomain("fuel-3d.com");
+    QCoreApplication::setOrganizationName("ThinkingHat");
+    QCoreApplication::setOrganizationDomain("thinkinghat.com");
     QCoreApplication::setApplicationName(APPLICATION_NAME);
     QCoreApplication::setApplicationVersion(FUELFILTER_VERSION);
 
-    // Enable loggging of quick scene graph renderer information
-    //qputenv("QSG_INFO", "1");
-
-    //console window
-    //#ifdef CONSOLE_MODE
-    //    qputenv("QT_LOGGING_TO_CONSOLE", QByteArray("1"));
-    //#else
-    //    qputenv("QT_LOGGING_TO_CONSOLE", QByteArray("0"));
-    //#endif
-
-    //qInstallMessageHandler(RodentMessageHandler);
     InstanceGuard guard(APPLICATION_NAME);
 
     if (!guard.tryRun())
@@ -37,7 +25,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        FuelFilterApplication app(argc, argv);
+        ThinkingHatApplication app(argc, argv);
 
         if(!app.initialize())
         {

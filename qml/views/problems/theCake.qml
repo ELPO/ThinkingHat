@@ -185,6 +185,9 @@ Item
                     lastWords.push(distances.length - 1)
                     lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, text.length - 1)))
                 }
+
+                console.log(lineswidth)
+                console.log(lastWords)
             }
 
             Canvas {
@@ -234,7 +237,7 @@ Item
 
                         for (var k = startLine; k <= endLine; k++) {
                             start = k === startLine ? statment.distances[startWord][1] : 0
-                            end = k === endLine ? statment.distances[endWord][2] : statment.lineswidth[j]
+                            end = k === endLine ? statment.distances[endWord][2] : statment.lineswidth[k]
                             h = fontMetrics.height + 4 + fontMetrics.height * k * 2
                             ctx.moveTo(start + margin, h + margin)
                             ctx.lineTo(end + margin, h + margin)
