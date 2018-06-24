@@ -44,6 +44,10 @@ InstanceGuard::~InstanceGuard()
 
 bool InstanceGuard::tryRun()
 {
+    #ifdef Q_OS_ANDROID
+        return true;
+    #endif
+
     if (isAnotherRunning())
     {
         return false;

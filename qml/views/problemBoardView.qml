@@ -73,7 +73,6 @@ Item
         }
 
         RowLayout {
-
             width: parent.width
             height: 40
 

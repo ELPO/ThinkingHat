@@ -86,7 +86,7 @@ Item
             }
 
             Text {
-                text: appGlobal.problem
+                text: appGlobal.problemPickedStarting
                 font.family: appTheme.fontFamily
                 font.pixelSize: 18
                 color: "black"
@@ -120,11 +120,12 @@ Item
             }
 
             Text {
-                text: "El juez me\nha quitado 6"
+                text: appGlobal.problemPickedChanger
                 font.family: appTheme.fontFamily
                 font.pixelSize: 18
                 color: "black"
                 Layout.fillWidth: true
+                wrapMode: Text.WordWrap
             }
         }
 
@@ -153,11 +154,12 @@ Item
             }
 
             Text {
-                text: "Cuántas casas\nme quedan?"
+                text: appGlobal.problemPickedUnknown
                 font.family: appTheme.fontFamily
                 font.pixelSize: 18
                 color: "black"
                 Layout.fillWidth: true
+                wrapMode: Text.WordWrap
             }
         }
 

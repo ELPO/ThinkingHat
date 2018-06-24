@@ -89,6 +89,8 @@ Item
                 border.color: "black"
                 border.width: 1
 
+                visible: false
+
                 Image {
                     anchors.centerIn: parent
                     fillMode: Image.PreserveAspectFit
@@ -151,17 +153,20 @@ Item
                         cur = text.indexOf(" ", cur);
                         if (cur === -1) {
                             if (fontMetrics.advanceWidth(text.substring(startLine, length - 1)) > width) {
-                                lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, precur)))                             
                                 line++
+                                lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, precur)))
+                                lastWords.push(distances.length - 1)
                                 startLine = startWord
                             }
 
-                            lastWords.push(distances.length - 1)
+
                             distances.push([line,
                                             fontMetrics.advanceWidth(text.substring(startLine, startWord)),
                                             fontMetrics.advanceWidth(text.substring(startLine, length)),
                                             startWord,
                                             length])
+
+
                             break;
                         }
 
@@ -185,9 +190,6 @@ Item
                     lastWords.push(distances.length - 1)
                     lineswidth.push(fontMetrics.advanceWidth(text.substring(startLine, text.length - 1)))
                 }
-
-                console.log(lineswidth)
-                console.log(lastWords)
             }
 
             Canvas {
@@ -359,69 +361,6 @@ Item
                         }
                     }
 
-                    //  test for remove
-                    function moveSelection() {
-                        var mouseX = pressDetector.mouseX - canvas.margin
-                        var mouseY = pressDetector.mouseY - canvas.margin
-                        var clickHeight = Math.floor(mouseY / fontMetrics.height)
-
-                        if (clickHeight % 2 === 0 &&
-                            mouseY - clickHeight * fontMetrics.height < fontMetrics.height / 2.0)
-                            clickHeight--
-
-                        if (clickHeight % 2 === 1) {
-                            var len = statment.text.length
-
-                            for (var i = 0; i < statment.distances.length; i++) {
-                                var row = statment.distances[i][0]
-                                if (row === Math.floor(clickHeight / 2.0)){
-                                    if ((statment.lineswidth[row] < mouseX) &&
-                                            mouseX < width - canvas.margin * 2 &&
-                                            row !== lineOrigin && lineOrigin !== -1) {
-                                        if (lineOrigin < row) {
-                                            endLine = row
-                                            endWord = statment.lastWords[row]
-
-                                        } else {
-                                            startWord = statment.lastWords[row]
-                                            startLine = row
-                                        }
-
-                                        canvas.requestPaint()
-                                        break
-                                    }
-                                    else if (statment.distances[i][1] <= mouseX &&
-                                             (statment.distances[i][2] > mouseX)) {
-                                        if (row > lineOrigin) {
-                                            endLine = row
-                                            endWord = i
-                                        } else if (row < lineOrigin) {
-                                            startLine = row
-                                            startWord = i
-                                        } else {
-                                            startLine = lineOrigin
-                                            endLine = lineOrigin
-
-                                            if (i < wordOrigin) {
-                                                startWord = i
-                                                endWord = wordOrigin
-                                            } else if (i > wordOrigin) {
-                                                endWord = i
-                                                startWord = wordOrigin
-                                            } else {
-                                                startWord = i
-                                                endWord = i
-                                            }
-                                        }
-
-                                        canvas.requestPaint()
-                                        break
-                                    }
-                                }
-                            }
-                        }
-                    }
-
                     function clickSelection() {
                         var mouseX = pressDetector.mouseX - canvas.margin
                         var mouseY = pressDetector.mouseY - canvas.margin
@@ -474,12 +413,16 @@ Item
                 if (result === 0) {
                     pressDetector.visible = false
 
-                    if (butidx === 0)
+                    if (butidx === 0) {
                         results.uCond = true
-                    else if (butidx === 1)
+                        appGlobal.problemPickedUnknown = selectedText
+                    } else if (butidx === 1) {
                         results.sCond = true
-                    else if (butidx === 2)
+                        appGlobal.problemPickedStarting = selectedText
+                    } else if (butidx === 2) {
                         results.cCond = true
+                        appGlobal.problemPickedChanger= selectedText
+                    }
 
                     canvas.validated.push([pressDetector.startLine,
                                            pressDetector.endLine,
@@ -547,6 +490,8 @@ Item
 
         Button {
             id: draw
+
+            visible: false
 
             text: "Draw Strategy"
             anchors.horizontalCenter: parent.horizontalCenter

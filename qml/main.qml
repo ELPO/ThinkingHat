@@ -27,6 +27,9 @@ ApplicationWindow {
         property var problemUnkown: []
         property var problemStartingPoint: []
         property var problemChanger: []
+        property string problemPickedChanger: ""
+        property string problemPickedUnknown: ""
+        property string problemPickedStarting: ""
         property int problemSolution: -1
     }
 

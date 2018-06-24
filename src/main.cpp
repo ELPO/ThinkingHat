@@ -6,7 +6,7 @@
 namespace
 {
 const QString APPLICATION_NAME = "ThinkingHat";
-const QString FUELFILTER_VERSION = "0.9.1";
+const QString FUELFILTER_VERSION = "0.9.2";
 }
 
 int main(int argc, char *argv[])

@@ -6,22 +6,41 @@
 #include <QFile>
 #include <QDir>
 
+constexpr char defaultProblemData[] = ":/resources/problems/data.json";
+
 ThinkingHatApplication::ThinkingHatApplication(int &argc, char **argv)
     : QGuiApplication (argc, argv)
     , m_problemsModel(new ProblemsModel(this))
 {
-    //qDebug() << QStandardPaths::writableLocation(QStandardPaths::DataLocation);;
-
-//    QDir d(locations[0]);
-//    if (!d.exists()) {
-//        d.mkdir(".");
-//    }
 }
 
 bool ThinkingHatApplication::initialize()
 {
     // loading problem data
-    if (!m_problemsModel->initialize(":/resources/problems/data.json"))
+    QString problemData = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/problemData.json";
+
+    QFile f(problemData);
+    if (!f.exists()) {
+        qDebug() << "No problem data found: creating one.";
+        QFile innerData(defaultProblemData);
+        innerData.open(QIODevice::ReadOnly);
+        QFile test (problemData);
+        if (test.open(QIODevice::ReadWrite))
+        {
+            QByteArray ba = innerData.readAll();
+            test.write(ba);
+            test.close();
+        }
+
+        innerData.close();
+    }
+
+    if (!f.exists()) {
+        qDebug() << "Can't create a problem data file. Using inner file.";
+        problemData = defaultProblemData;
+    }
+
+    if (!m_problemsModel->initialize(problemData))
     {
         qDebug() << "Failed to initialize problem list";
         return false;

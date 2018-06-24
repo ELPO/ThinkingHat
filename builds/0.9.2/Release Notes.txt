@@ -1,0 +1,5 @@
+﻿Version 0.9.2:
+
+-Mejora del eleccionado del texto en el Check Understanding, ahora se seleccionamediante subrayado.
+-Las opciones de audio en los problemas y estrategia de pintado han sido ocultadas de momento.
+-La posibilidad de cargar problemas ha sido introducida, ver ThinkingHat\builds\README.txt 

@@ -19,7 +19,7 @@ QSharedPointer<Problem> Problem::createProblem(const QString &name, const QStrin
         return QSharedPointer<Problem>(nullptr);
     }
 
-    if (statment.isEmpty()) {
+    if (statment.isEmpty() || statment.size() > 200) {
         return QSharedPointer<Problem>(nullptr);
     }
 
