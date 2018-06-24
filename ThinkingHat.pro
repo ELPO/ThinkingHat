@@ -13,7 +13,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp
+        src/main.cpp \
+    src/ThinkingHatApplication.cpp \
+    src/InstanceGuard.cpp \
+    src/Models/ProblemsModel.cpp \
+    src/Data/Problem.cpp
 
 RESOURCES += qml.qrc
 
@@ -29,4 +33,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    resources/houses/house6.png
+    resources/houses/house6.png \
+    resources/problems/data.json
+
+HEADERS += \
+    src/ThinkingHatApplication.h \
+    src/InstanceGuard.h \
+    src/Models/ProblemsModel.h \
+    src/Data/Problem.h

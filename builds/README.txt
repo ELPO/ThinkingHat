@@ -1,4 +1,4 @@
-(breve)Guía para probar las builds:
+﻿Guía para probar las builds:
 
 1. Requisitos:
 -Movil android con una version actualizada del Sistema Operativo (si no sabes si tu movil esta actualizado es que probablemente lo esté)
@@ -17,3 +17,23 @@ Si alguna vez habéis movido archivos (por ejemplo fotos) entre el movil y el or
 
 4. En vuestro móvil ir a la carpeta donde hubiéseis colocado el .apk y pulsarle, el cual debería instalar y abrir la app que ya quedaría 
 en vuestro movil junto al resto de aplicaciones.
+
+
+Guía para importar problemas:
+
+1. Requisitos:
+-Una herramienta para ver los archivos de applicación de Android. Lo mas fácil es tener instalado el Android Studio.
+-Haber corrido la applicación al menos una vez.
+
+2. Conectar el Movil al ordenador en modo de transferencia de archivos (Media Transfer Protocol).
+
+3. Abrir el Android Studio. Ir a View>Tool Windows>Device File Explorer
+Una explorador de archivos del móvil deberá haberse abierto.
+
+4. Navegar hasta data>data>org.qtproject.example.ThinkingHat>files
+Deberá haber un archivo llamado 'problemData.json' Le damos r-click>Open y debería aparecer el contenido. 
+El archivo no puede editarse directamente sobre el móvil, lo que tenemos que hacer es crear en cualquier sitio de nuestro sistema operativo usando nuestro editor favorito un 
+archivo llamado 'problemData.json' editarlo cuanto queramos (ver problemDataGuia.json) y finalmente sobre la carpeta data>data>org.qtproject.example.ThinkingHat>files del Device File Explorer hacer r-click>Upload
+seleccionando el 'problemData.json' que hemos creado/editado en nuestro so. Esto pegará nuestro 'problemData.json' sobre el 'problemData.json' del móvil.
+
+5. Desenganchar el movil. La app debería cargar ahora los problemas de nuestro 'problemData.json'.

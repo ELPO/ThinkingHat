@@ -1,0 +1,32 @@
+-Statment: Enunciado del problema. 200 caracteres como máximo. No puede contener más que caracteres alfanuméricos, espacios, signos de puntuación 
+exclamación e interrogación.
+-unknown, changer, starting: Listas con todas las opciones validades de unknown, changer y startingPoint. Cada elemento de la lista 
+debe ser un substring estricto del Statment. No puede haber solapamientos entre ellos. Tiene que ser un texto continuo (no son validos por ejemplo 
+2 changers que aparezcan en puntos no continuos del enunciado.
+-solution: Actualmente solo puede ser un integer.
+
+Nota: Actualmente a efectos de la aplicación todo texto entre espacios conforma una palabra, es decir '¿Cuántas' y no 'Cuantas' es la
+primera palbra del unknown en 'The Cake'. Esto es relevante para matchear las palbras como puede verse en el starting de 'The Looter': el texto
+es '20 magdalenas.' y no '20 magdalenas'.
+
+{
+    "version": "1.0.0", 
+	"problems": [ 
+		{
+            "name": "The Cake", 
+            "statment": "Tengo 12 casas de montaña y el juez me quita 6 para mi exmujer. ¿Cuántas casas me quedan?",
+            "unknown": ["¿Cuántas casas me quedan?"],
+            "starting": ["12 casas", "12 casas de montaña"],
+            "changer": ["me quita 6", "quita 6"],
+			"solution": 6
+		},
+		{
+            "name": "The Looter",
+            "statment": "Madre ha horneado 20 magdalenas. ¿Cuántas magdalenas quedan para mi si mis 2 hermanos mayores ya se han comido 8 magdalenas cada uno?",
+            "unknown": ["¿Cuántas magdalenas quedan para mi", "¿Cuántas magdalenas quedan"],
+            "starting": ["20 magdalenas.", "Madre ha horneado 20 magdalenas."],
+            "changer": ["mis 2 hermanos mayores ya se han comido 8 magdalenas cada uno?"],
+			"solution": 4
+        }
+	]
+}
