@@ -203,6 +203,7 @@ Item
             anchors.horizontalCenter: parent.horizontalCenter
 
             onClicked: {
+                appGlobal.problemName = problemsModel.getName(problemView.currentIndex)
                 appGlobal.problemStatment = problemsModel.getStatment(problemView.currentIndex)
                 appGlobal.problemUnkown = problemsModel.getUnknown(problemView.currentIndex)
                 appGlobal.problemStartingPoint = problemsModel.getStarting(problemView.currentIndex)

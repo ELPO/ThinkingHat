@@ -66,7 +66,7 @@ Item
             }
 
             Text {
-                text: "Problem 1: The Cake"
+                text: appGlobal.problemName
                 anchors.verticalCenter: parent.verticalCenter
                 font.family: appTheme.fontFamily
                 font.pixelSize: 14

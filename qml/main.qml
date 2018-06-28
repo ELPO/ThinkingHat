@@ -23,6 +23,7 @@ ApplicationWindow {
         property string avatar: ""
         property string drawPre: ""
         property string drawPost: ""
+        property string problemName: ""
         property string problemStatment: ""
         property var problemUnkown: []
         property var problemStartingPoint: []

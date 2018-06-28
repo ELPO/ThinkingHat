@@ -23,6 +23,7 @@ public:
 
     QHash<int, QByteArray> roleNames() const override;
 
+    Q_INVOKABLE QString getName(int index) const;
     Q_INVOKABLE QString getStatment(int index) const;
     Q_INVOKABLE QStringList getUnknown(int index) const;
     Q_INVOKABLE QStringList getStarting(int index) const;

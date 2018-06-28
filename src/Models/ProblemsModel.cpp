@@ -134,6 +134,15 @@ QHash<int, QByteArray> ProblemsModel::roleNames() const
     return roles;
 }
 
+QString ProblemsModel::getName(int index) const
+{
+    if (index < 0 || index >= m_problems.count())
+        return "";
+
+    QSharedPointer<Problem> p = m_problems[index];
+    return p->getName();
+}
+
 QString ProblemsModel::getStatment(int index) const
 {
     if (index < 0 || index >= m_problems.count())
