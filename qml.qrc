@@ -42,5 +42,11 @@
         <file>resources/fonts/Montserrat-Medium.ttf</file>
         <file>resources/problems/data.json</file>
         <file>qml/main.qml</file>
+        <file>resources/sounds/right1.wav</file>
+        <file>resources/sounds/right2.wav</file>
+        <file>resources/sounds/right3.wav</file>
+        <file>resources/sounds/right4.wav</file>
+        <file>resources/sounds/wrong.wav</file>
+        <file>resources/sounds/problemFail.wav</file>
     </qresource>
 </RCC>

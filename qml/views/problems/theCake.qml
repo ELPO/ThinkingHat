@@ -21,9 +21,36 @@ Item
     Audio {
         id: audio
 
+        readonly property string wrongSrc: "../../../../resources/sounds/wrong.wav"
+        readonly property string right1Src: "../../../../resources/sounds/right1.wav"
+        readonly property string right2Src: "../../../../resources/sounds/right2.wav"
+        readonly property string right3Src: "../../../../resources/sounds/right3.wav"
+
         source: "../../../../resources/problema1.wav"
         onStopped: {
             playSound.enabled = true
+        }
+
+        function wrong() {
+            source = wrongSrc
+            play()
+        }
+
+        function right1() {
+            source = right1Src
+            play()
+        }
+
+        function right2() {
+
+            source = right2Src
+            play()
+        }
+
+        function right3() {
+
+            source = right3Src
+            play()
         }
     }
 
@@ -139,9 +166,9 @@ Item
                 font.pixelSize: statment.font.pixelSize
             }
 
-            onWidthChanged: {
-                // Assumption: Window size is not editable so this is like an effective onComplete slot
-                if (parent.width !== 0) {
+            onTextChanged: {
+                // Assumption: Text is not editable so this is like an effective onComplete slot
+                if (text !== "") {
                     var length = text.length;
                     var line = 0
                     var startLine = 0
@@ -410,6 +437,14 @@ Item
 
                 var result = validate(selectedText, refText)
                 if (result === 0) {
+                    // play
+                    if (canvas.validated.length === 0)
+                        audio.right1()
+                    else if (canvas.validated.length === 1)
+                        audio.right2()
+                    else if (canvas.validated.length === 2)
+                        audio.right3()
+
                     if (butidx === 0) {
                         results.uCond = true
                         appGlobal.problemPickedUnknown = selectedText
@@ -434,12 +469,14 @@ Item
                     } else if (!results.cCond) {
                         cursors.currentIndex = 2
                     } else {
+                        pressDetector.visible = false
                         screen.solved = true
                     }
 
                 } else if (result !== 1) {
                     pressDetector.selectionGoing = false
-                    canvas.requestPaint()
+                    audio.wrong();
+                    canvas.requestPaint();
                 } else pressDetector.selectionGoing = true
             }
         }
@@ -479,6 +516,7 @@ Item
                     header.visible = true
                     buttons.visible = true
                 } else {
+                    audio.stop()
                     stackView.push("theCakeCalc.qml")
                 }
             }

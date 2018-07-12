@@ -1,6 +1,7 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import QtMultimedia 5.8
 
 Item
 {
@@ -11,6 +12,16 @@ Item
         Item {
             width: parent.width
             height: 30
+        }
+
+        Audio {
+            id: audio
+
+            source: "../../../../resources/sounds/problemFail.wav"
+
+            Component.onCompleted: {
+                play()
+            }
         }
 
         Image {
@@ -46,18 +57,18 @@ Item
             height: 20
         }
 
-        Text {
-            id: hint
+//        Text {
+//            id: hint
 
-            visible: true
-            text: "Hint: El juez me ha quitado casas,\npiensa que operación aritmética se relaciona con\nquitar o sustraer."
-            anchors.horizontalCenter: parent.horizontalCenter
+//            visible: true
+//            text: "Hint: El juez me ha quitado casas,\npiensa que operación aritmética se relaciona con\nquitar o sustraer."
+//            anchors.horizontalCenter: parent.horizontalCenter
 
-            font.family: appTheme.fontFamily
-            font.pixelSize: 12
-            color: "gray"
-            horizontalAlignment: Text.AlignHCenter
-        }
+//            font.family: appTheme.fontFamily
+//            font.pixelSize: 12
+//            color: "gray"
+//            horizontalAlignment: Text.AlignHCenter
+//        }
 
         Item{
             width: parent.width
@@ -81,6 +92,7 @@ Item
                 font.pixelSize: 14
 
                 onClicked: {
+                    audio.stop()
                     stackView.push("problems/theCakeCalc.qml")
                 }
 
@@ -112,6 +124,7 @@ Item
                 font.pixelSize: 14
 
                 onClicked: {
+                    audio.stop()
                     Qt.quit()
                 }
 

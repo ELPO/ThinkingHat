@@ -1,6 +1,7 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import QtMultimedia 5.8
 
 Item
 {
@@ -12,6 +13,17 @@ Item
             width: parent.width
             height: 30
         }
+
+        Audio {
+            id: audio
+
+            source: "../../../../resources/sounds/right4.wav"
+
+            Component.onCompleted: {
+                play()
+            }
+        }
+
 
         Image {
             id: trophy
@@ -90,6 +102,7 @@ Item
                 font.pixelSize: 14
 
                 onClicked: {
+                    audio.stop()
                     stackView.push("problemBoardView.qml")
                 }
 
@@ -121,6 +134,7 @@ Item
                 font.pixelSize: 14
 
                 onClicked: {
+                    audio.stop()
                     Qt.quit()
                 }
 
