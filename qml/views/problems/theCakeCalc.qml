@@ -68,12 +68,12 @@ Item
             }
             Rectangle {
                 color: "#b6e8e5"
-                width: 160
-                height: 70
+                width: 100
+                height: 45
 
                 Text {
                     anchors.centerIn: parent
-                    text: "The starting\npoint?"
+                    text: "Starter"
                     font.family: appTheme.fontFamily
                     font.pixelSize: 14
                     color: "black"
@@ -102,12 +102,12 @@ Item
             }
             Rectangle {
                 color: "#F0A9ED"
-                width: 160
-                height: 70
+                width: 100
+                height: 45
 
                 Text {
                     anchors.centerIn: parent
-                    text: "What is the\nchanger?"
+                    text: "Changer"
                     font.family: appTheme.fontFamily
                     font.pixelSize: 14
                     color: "black"
@@ -136,12 +136,12 @@ Item
             }
             Rectangle {
                 color: "#FFFF01"
-                width: 160
-                height: 70
+                width: 100
+                height: 45
 
                 Text {
                     anchors.centerIn: parent
-                    text: "What is the\nunknown?"
+                    text: "Unknown?"
                     font.family: appTheme.fontFamily
                     font.pixelSize: 14
                     color: "black"
@@ -196,7 +196,6 @@ Item
                 requestPaint()
             }
 
-
             MouseArea {
                 id: eventArea
 
@@ -205,6 +204,8 @@ Item
                 property real yStart: 0.0
                 property real xEnd: 0.0
                 property real yEnd: 0.0
+
+                visible: false
 
                 onPressed: {
                     solution.focus = false
@@ -269,43 +270,31 @@ Item
         RowLayout {
             width: parent.width
 
-            height: 150
-
             Item {
-                height: parent.height
                 width: 30
+                height: parent.height
             }
 
-            Item {
-                Layout.fillWidth: true
+            Column {
                 height: parent.height
+                Layout.fillWidth: true
 
                 Text {
                     id: headerField
 
-                    anchors.top: parent.top
+                    anchors.left: solution.left
                     text: "Write your solution here"
                     font.family: appTheme.fontFamily
                     font.pixelSize: 14
                     color: "gray"
                 }
 
-                Item {
-                    id: space
-
-                    height: 10
-                    width: parent.width
-                    anchors.top: headerField.bottom
-                }
-
                 TextField {
                     id: solution
 
-                    anchors.top: space.bottom
-                    height: parent.height - headerField.height - space.height
                     width: parent.width
                     font.family: appTheme.fontFamily
-                    font.pixelSize: 80
+                    font.pixelSize: 50
                     horizontalAlignment: Text.AlignHCenter
 
                     background: Rectangle {
@@ -317,45 +306,59 @@ Item
                 }
             }
 
-            Button {
-                id: submit
+            Item {
+                width: 20
+                height: parent.height
+            }
 
-                enabled: solution.text != ""
+            Column {
+                height: parent.height
 
-                text: "Submit"
-                anchors.verticalCenter: parent.verticalCenter
-                font.family: appTheme.fontFamily
-                font.pixelSize: 14
-
-                background: Rectangle {
-                    color: submit.enabled ? "black" : "gray"
-                    radius: width / 3.2
+                Item {
+                    width: parent.width
+                    height: headerField.height
                 }
 
-                contentItem: Text {
-                    text: submit.text
-                    font: submit.font
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    elide: Text.ElideRight
-                }
+                Button {
+                    id: submit
 
-                onClicked: {
-                    if (Number.fromLocaleString(solution.text) === appGlobal.problemSolution) {
-                        stackView.push("../successView.qml")
-                    } else {
-                        stackView.push("../wrongView.qml")
+                    enabled: solution.text !== ""
+
+                    text: "Submit"
+
+                    font.family: appTheme.fontFamily
+                    font.pixelSize: 14
+
+                    background: Rectangle {
+                        color: submit.enabled ? "black" : "gray"
+                        radius: width / 3.2
                     }
 
-                    drawArea.clear()
-                    solution.clear()
+                    contentItem: Text {
+                        text: submit.text
+                        font: submit.font
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
+
+                    onClicked: {
+                        if (Number.fromLocaleString(solution.text) === appGlobal.problemSolution) {
+                            stackView.push("../successView.qml")
+                        } else {
+                            stackView.push("../wrongView.qml")
+                        }
+
+                        drawArea.clear()
+                        solution.clear()
+                    }
                 }
             }
 
             Item {
-                height: parent.height
                 width: 30
+                height: parent.height
             }
         }
 
@@ -364,6 +367,5 @@ Item
             width: parent.width
         }
     }
-
 }
 

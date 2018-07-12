@@ -51,8 +51,9 @@ Item
     }
 
     ColumnLayout {
-
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.bottom: footer.top
+        width: parent.width
 
         RowLayout {
             width: parent.width
@@ -165,8 +166,6 @@ Item
                                             fontMetrics.advanceWidth(text.substring(startLine, length)),
                                             startWord,
                                             length])
-
-
                             break;
                         }
 
@@ -252,8 +251,8 @@ Item
                 MouseArea {
                     id: pressDetector
 
-                    visible: false
                     anchors.fill: parent
+                    visible: false
 
                     property int wordOrigin: -1
                     property int lineOrigin: -1
@@ -411,8 +410,6 @@ Item
 
                 var result = validate(selectedText, refText)
                 if (result === 0) {
-                    pressDetector.visible = false
-
                     if (butidx === 0) {
                         results.uCond = true
                         appGlobal.problemPickedUnknown = selectedText
@@ -430,11 +427,16 @@ Item
                                            pressDetector.endWord,
                                            cursors.color])
 
-                    cursors.currentIndex = -1
-
-                    if (results.uCond === true && results.sCond === true && results.cCond === true) {
+                    if (!results.uCond) {
+                        cursors.currentIndex = 0
+                    } else if (!results.sCond) {
+                        cursors.currentIndex = 1
+                    } else if (!results.cCond) {
+                        cursors.currentIndex = 2
+                    } else {
                         screen.solved = true
                     }
+
                 } else if (result !== 1) {
                     pressDetector.selectionGoing = false
                     canvas.requestPaint()
@@ -472,6 +474,7 @@ Item
             onClicked: {
                 if (!screen.solved) {
                     visible = false
+                    pressDetector.visible = true
                     draw.visible = false
                     header.visible = true
                     buttons.visible = true
@@ -919,7 +922,15 @@ Item
             visible: true
             width: parent.width
             Layout.fillHeight: true
-        }
+        }  
+    }
+
+    Item {
+        id: footer
+
+        width: parent.width
+        height: cursors.itemHeight + header.height
+        anchors.bottom: parent.bottom
 
         Text {
             id: header
@@ -928,6 +939,8 @@ Item
             font.pixelSize: 12
             color: "gray"
             text: "Mark the problem's structural elements"
+
+            anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             height:  20
             visible: false
@@ -937,6 +950,7 @@ Item
             id: buttons
             width: parent.width
             height: cursors.itemHeight
+            anchors.bottom: parent.bottom
             visible: false
 
             ListView {
@@ -953,7 +967,7 @@ Item
                 interactive: false
                 model: 3
                 height: parent.height
-                currentIndex: -1
+                currentIndex: 0
 
                 spacing: 0
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -996,7 +1010,6 @@ Item
                             anchors.fill: parent
 
                             onClicked: {
-                                pressDetector.visible = true
                                 cursors.currentIndex = index
 
                                 pressDetector.reset()
@@ -1021,7 +1034,7 @@ Item
                         anchors.top: internalSpace.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
                         horizontalAlignment: Text.AlignHCenter
-                        text: index === 0 ? "Unknown" : (index === 1 ? "Starting\nPoint" : "Changer")
+                        text: index === 0 ? "Unknown" : (index === 1 ? "Starter" : "Changer")
                     }
                 }
             }

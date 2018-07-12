@@ -1,6 +1,5 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.2
-
 import QtQuick.Window 2.3
 
 ApplicationWindow {
@@ -18,6 +17,9 @@ ApplicationWindow {
     QtObject {
         id: appGlobal
 
+        readonly property bool debug: false
+        readonly property string initialScreen: "views/homeView.qml"
+
         property string userName: ""
         property int userAge: 0
         property string avatar: ""
@@ -32,6 +34,22 @@ ApplicationWindow {
         property string problemPickedUnknown: ""
         property string problemPickedStarting: ""
         property int problemSolution: -1
+
+        Component.onCompleted: {
+            if (debug) {
+                userAge = 7
+                avatar = "../../resources/avatars/001.png"
+                problemName = "Debug Problem"
+                problemStatment = "Madre ha horneado 20 magdalenas. ¿Cuántas magdalenas quedan para mi si mis 2 hermanos mayores ya se han comido 8 magdalenas cada uno?"
+                problemUnkown = ["¿Cuántas magdalenas quedan para mi", "¿Cuántas magdalenas quedan"]
+                problemStartingPoint = ["20 magdalenas.", "Madre ha horneado 20 magdalenas."]
+                problemChanger = ["mis 2 hermanos mayores ya se han comido 8 magdalenas cada uno?"]
+                problemSolution = 4
+                problemPickedUnknown = "¿Cuántas magdalenas quedan para mi"
+                problemPickedChanger = "mis 2 hermanos mayores ya se han comido 8 magdalenas cada uno?"
+                problemPickedStarting = "Madre ha horneado 20 magdalenas."
+            }
+        }
     }
 
     QtObject {
@@ -74,7 +92,7 @@ ApplicationWindow {
 
     StackView {
         id: stackView
-        initialItem: "views/homeView.qml"
+        initialItem: appGlobal.initialScreen
         anchors.fill: parent
     }
 }
