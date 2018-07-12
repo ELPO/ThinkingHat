@@ -4,6 +4,8 @@ exclamación e interrogación.
 debe ser un substring estricto del Statment. No puede haber solapamientos entre ellos. Tiene que ser un texto continuo (no son validos por ejemplo 
 2 changers que aparezcan en puntos no continuos del enunciado.
 -solution: Actualmente solo puede ser un integer.
+-problem list version será un entero que marca la version interna de la lista de problemas de la applicacion. Cualquier lista custom con un número menor que la lista interna (2 para la version 0.9.3)
+será ignorada
 
 Nota: Actualmente a efectos de la aplicación todo texto entre espacios conforma una palabra, es decir '¿Cuántas' y no 'Cuantas' es la
 primera palbra del unknown en 'The Cake'. Esto es relevante para matchear las palbras como puede verse en el starting de 'The Looter': el texto
@@ -11,6 +13,7 @@ es '20 magdalenas.' y no '20 magdalenas'.
 
 {
     "version": "1.0.0", 
+	"problem list version": "2",
 	"problems": [ 
 		{
             "name": "The Cake", 

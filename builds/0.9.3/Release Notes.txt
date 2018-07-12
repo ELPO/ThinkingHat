@@ -1,0 +1,6 @@
+﻿Version 0.9.3:
+
+-Sonidos añadidos.
+-Dibujado desactivado.
+-Pequeños cambios en el layout y el diseño.
+-Version de los problemas añadida al json del problema
