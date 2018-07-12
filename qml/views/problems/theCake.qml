@@ -168,6 +168,16 @@ Item
 
             onTextChanged: {
                 // Assumption: Text is not editable so this is like an effective onComplete slot
+                if(appGlobal.debug)
+                    processText()
+            }
+
+            onWidthChanged: {
+                if(!appGlobal.debug)
+                    processText()
+            }
+
+            function processText() {
                 if (text !== "") {
                     var length = text.length;
                     var line = 0
@@ -186,7 +196,6 @@ Item
                                 lastWords.push(distances.length - 1)
                                 startLine = startWord
                             }
-
 
                             distances.push([line,
                                             fontMetrics.advanceWidth(text.substring(startLine, startWord)),
@@ -470,6 +479,7 @@ Item
                         cursors.currentIndex = 2
                     } else {
                         pressDetector.visible = false
+                        cursors.currentIndex = -1
                         screen.solved = true
                     }
 

@@ -6,7 +6,7 @@
 namespace
 {
 const QString APPLICATION_NAME = "ThinkingHat";
-const QString FUELFILTER_VERSION = "0.9.2";
+const QString THINKINGHAT_VERSION = "0.9.3";
 }
 
 int main(int argc, char *argv[])
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("ThinkingHat");
     QCoreApplication::setOrganizationDomain("thinkinghat.com");
     QCoreApplication::setApplicationName(APPLICATION_NAME);
-    QCoreApplication::setApplicationVersion(FUELFILTER_VERSION);
+    QCoreApplication::setApplicationVersion(THINKINGHAT_VERSION);
 
     InstanceGuard guard(APPLICATION_NAME);
 

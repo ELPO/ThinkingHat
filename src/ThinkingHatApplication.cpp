@@ -7,6 +7,7 @@
 #include <QDir>
 
 constexpr char defaultProblemData[] = ":/resources/problems/data.json";
+constexpr int problemListVersion = 2;
 
 ThinkingHatApplication::ThinkingHatApplication(int &argc, char **argv)
     : QGuiApplication (argc, argv)
@@ -44,6 +45,16 @@ bool ThinkingHatApplication::initialize()
     {
         qDebug() << "Failed to initialize problem list";
         return false;
+    }
+
+    if (m_problemsModel->version() < problemListVersion) {
+        qDebug() << "Problem data file outdated. Using inner file.";
+
+        if (!m_problemsModel->initialize(defaultProblemData))
+        {
+            qDebug() << "Failed to initialize problem list";
+            return false;
+        }
     }
 
     m_engine.rootContext()->setContextProperty("problemsModel", m_problemsModel.data());

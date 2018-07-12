@@ -7,12 +7,15 @@
 #include <QFile>
 
 ProblemsModel::ProblemsModel(QObject *parent)
-    : QAbstractListModel(parent)
+    : QAbstractListModel(parent) ,
+      m_version(0)
 {
 }
 
 bool ProblemsModel::initialize(const QString &dataPath)
 {
+    m_problems.clear();
+
     QFile f(dataPath);
 
     if(!f.open(QFile::ReadOnly | QFile::Text)){
@@ -22,6 +25,15 @@ bool ProblemsModel::initialize(const QString &dataPath)
 
     QJsonDocument sd = QJsonDocument::fromJson(f.readAll());
     QJsonObject problemData = sd.object();
+    QString versionStr = problemData.value("problem list version").toString();
+    bool error = false;
+    int version = versionStr.toInt(&error);
+    if (error) {
+        m_version = 0;
+    } else {
+        m_version = version;
+    }
+
     QJsonArray problemArray = problemData.value("problems").toArray();
 
     for (auto problem : problemArray) {
@@ -188,3 +200,7 @@ int ProblemsModel::getSolution(int index) const
     return p->getSolution();
 }
 
+int ProblemsModel::version() const
+{
+    return m_version;
+}

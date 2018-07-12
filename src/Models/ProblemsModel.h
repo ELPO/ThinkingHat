@@ -30,12 +30,16 @@ public:
     Q_INVOKABLE QStringList getChanger(int index) const;
     Q_INVOKABLE int getSolution(int index) const;
 
+    int version() const;
+
 signals:
 
 public slots:
 
 private:
     QList<QSharedPointer<Problem>> m_problems;
+
+    int m_version;
 };
 
 #endif // PROBLEMSMODEL_H
