@@ -12,6 +12,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+RC_ICONS += "resources/icons/ic_appLogo_144x144.ico"
+
 SOURCES += \
         src/main.cpp \
     src/ThinkingHatApplication.cpp \
@@ -34,7 +36,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     resources/houses/house6.png \
-    resources/problems/data.json
+    resources/problems/data.json \
+    resources/icons/ic_appLogo_144x144.png
 
 HEADERS += \
     src/ThinkingHatApplication.h \
