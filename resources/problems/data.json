@@ -1,21 +1,30 @@
 {
     "version": "1.0.0",
-	"problems": [
-		{
-            "name": "The Cake",
-            "statment": "Tengo 12 casas de montaña y el juez me quita 6 para mi exmujer. ¿Cuántas casas me quedan?",
-            "unknown": ["¿Cuántas casas me quedan?"],
-            "starting": ["12 casas", "12 casas de montaña"],
-            "changer": ["me quita 6", "quita 6"],
-			"solution": 6
-		},
-		{
-            "name": "The Looter",
-            "statment": "Madre ha horneado 20 magdalenas. ¿Cuántas magdalenas quedan para mi si mis 2 hermanos mayores ya se han comido 8 magdalenas cada uno?",
-            "unknown": ["¿Cuántas magdalenas quedan para mi", "¿Cuántas magdalenas quedan"],
-            "starting": ["20 magdalenas.", "Madre ha horneado 20 magdalenas."],
-            "changer": ["mis 2 hermanos mayores ya se han comido 8 magdalenas cada uno?"],
-			"solution": 4
-		}
+    "problems": 
+    [
+        {
+            "name": "Godzilla en Kakegawa",
+            "statment": "La población de Kakegawa tenía 1398 habitantes. Un día, Godzilla devoró a 34 personas. ¿Cuántas personas quedan en Kakegawa?",
+            "unknown": ["¿Cuántas personas quedan en Kakegawa?"],
+            "starting": ["1398 habitantes."],  
+            "changer": ["Godzilla devoró a 34 personas.", "34 personas."],
+            "solution": 1364
+        },
+        {
+            "name": "El Oso Boris",
+            "statment": "El oso Boris tiene 18 euros para gastarse en tarros de miel. Compra 3 tarros que cuestan 5 euros cada uno. ¿Cuántos tarros más podría comprarse?",
+            "unknown": ["¿Cuántos tarros más podría comprarse?"],
+            "starting": ["Boris tiene 18 euros","tiene 18 euros","18 euros"],
+            "changer": ["Compra 3 tarros que cuestan 5 euros cada uno.","Compra 3 tarros que cuestan 5 euros"],
+            "solution": 0
+        },
+        {
+            "name": "El Árbol Gigante",
+            "statment": "Mi árbol de Navidad gigante ha crecido 26 metros este año. El año pasado medía 201 metros. ¿Cúanto mide ahora?",
+            "unknown": ["¿Cúanto mide ahora?"],
+            "starting": ["medía 201 metros.", "201 metros."],
+            "changer": ["ha crecido 26 metros"],
+            "solution": 227
+        }
 	]
 }
