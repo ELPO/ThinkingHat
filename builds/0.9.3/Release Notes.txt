@@ -4,3 +4,6 @@
 -Dibujado desactivado.
 -Pequeños cambios en el layout y el diseño.
 -Version de los problemas añadida al json del problema
+
+Version 0.9.3.1:
+-Bug fix de lectura de json
