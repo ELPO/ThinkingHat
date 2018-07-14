@@ -26,9 +26,10 @@ bool ProblemsModel::initialize(const QString &dataPath)
     QJsonDocument sd = QJsonDocument::fromJson(f.readAll());
     QJsonObject problemData = sd.object();
     QString versionStr = problemData.value("problem list version").toString();
-    bool error = false;
-    int version = versionStr.toInt(&error);
-    if (error) {
+
+    bool ok = false;
+    int version = versionStr.toInt(&ok);
+    if (!ok) {
         m_version = 0;
     } else {
         m_version = version;
